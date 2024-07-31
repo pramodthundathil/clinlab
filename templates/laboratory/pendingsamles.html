@@ -1,0 +1,145 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+<div class="mobile-menu-overlay"></div>
+
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="title">
+                            <h4>Pending Samples</h4>
+                        </div>
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{%url 'Index'%}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Pending Samples</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <!-- submission form model and rejection model  -->
+
+            <div class="modal fade" id="success-modal" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body text-center font-18">
+                            <h3 class="mb-20">Test Added To list!</h3>
+                            <div class="mb-30 text-center"><img src="{%static 'vendors/images/success.png' %}"></div>
+                            New Test added to list click done to reload <br><br>
+                            <a href="{%url 'SingleTests' %}" type="button" class="btn btn-primary">Done</a>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                    <div class="modal-content bg-danger text-white">
+                        <div class="modal-body text-center">
+                            <h3 class="text-white mb-15"><i class="fa fa-exclamation-triangle"></i> Alert</h3>
+                            <p>Test is not added somethig went wrong</p>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Datatable start -->
+            <div class="card-box mb-30" style="overflow-x: auto;">
+                <div class="pd-20">
+                    <h4 class="text-blue h4">Pending Samples</h4>
+                </div>
+                <div class="pb-20">
+                    <table class="table hover multiple-select-row data-table-export nowrap">
+                        <thead>
+                            <tr>
+                                <th>Sl. Order Number</th>
+                                <th class="table-plus datatable-nosort">Patient</th>
+                                <th>Sample</th>
+                                <th>Date and time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order %}
+                            <tr>
+                                <td>{{forloop.counter}}. <b>{{item.order_number}}</b></td>
+                                <td class="table-plus">{{item.patient_name}}</td>
+                                <td>{{item.sample}}</td>
+                                <td>{{item.created_date}}</td>
+                                <td>
+                                    <span class="badge bg-warning">pending..</span>
+                                </td>
+                                <td>
+                                    <a href="{%url 'OrderSingle' item.id %}" class="btn btn-outline-info"><i class="icon-copy dw dw-edit-1"></i></a>
+
+                                    <!-- delete model start  -->
+                                    <a href="#" onclick="confirm ('Are you sure ??')" class="btn btn-outline-danger"
+                                        data-toggle="modal" data-target="#confirmation-modal"><i
+                                            class="icon-copy dw dw-delete-3"></i></a>
+
+                                    <!-- delete model end  -->
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Export Datatable End -->
+
+
+        </div>
+        <div class="footer-wrap pd-20 mb-20 card-box">
+            ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
+        </div>
+    </div>
+</div>
+<!-- js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+</script>
+
+
+<script src="{%static 'vendors/scripts/core.js' %}"></script>
+<script src="{%static 'vendors/scripts/script.min.js' %}"></script>
+<script src="{%static 'vendors/scripts/process.js' %}"></script>
+<script src="{%static 'vendors/scripts/layout-settings.js' %}"></script>
+<script src="{%static 'src/plugins/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/dataTables.responsive.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{%static 'vendors/scripts/dashboard.js' %}"></script>
+
+
+<!-- buttons for Export datatable -->
+<script src="{%static 'src/plugins/datatables/js/dataTables.buttons.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.print.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.html5.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.flash.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/pdfmake.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/vfs_fonts.js' %}"></script>
+<!-- Datatable Setting js -->
+<script src="{%static 'vendors/scripts/datatable-setting.js' %}"></script>
+
+{% endblock %}

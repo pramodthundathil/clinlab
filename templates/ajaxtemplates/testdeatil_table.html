@@ -1,0 +1,50 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Test</th>
+      <th scope="col">Result</th>
+      <th>Comment</th>
+      <th scope="col">Unit</th>
+      <th scope="col">Update</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in results %}
+    
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <th>{{item.test_type}}</th>
+      <td>
+        <label for="" class="text-blue">Result</label>
+        <input
+          type="text"
+          class="form-control result_val"
+          data-item-id="{{item.id}}"
+          placeholder=""
+          value="{{item.result_value}}"
+          
+        />
+      </td>
+      <td>
+        <label for="" class="text-blue">Comment</label>
+        <textarea name="" data-item-id="{{item.id}}" class="form-control comment" id="">{{item.comments}}</textarea>
+      </td>
+      <td>{{item.test_type.unit}}</td>
+      <td>
+        <!-- <span class="badge badge-primary">Update</span> -->
+        <a href="" class="btn btn-outline-success"
+          ><i class="icon-copy dw dw-check"></i></a>
+        <a
+          href="{%url 'delete_test_result' item.id %}"
+          onclick="confirm ('Are you sure ??')"
+          class="btn btn-outline-danger"
+          ><i class="icon-copy dw dw-delete-3"></i
+        ></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
