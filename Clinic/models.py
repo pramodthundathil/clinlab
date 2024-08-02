@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class TestType(models.Model):
     name = models.CharField(max_length=100)
+    specimen = models.CharField(max_length=20, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     normal_range = models.CharField(max_length=100, default=" ")
     unit = models.CharField(max_length=50)
@@ -13,11 +14,22 @@ class TestType(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class ComprehensiveTest(models.Model):
+    name = models.CharField(max_length=20)
+    specimen = models.CharField(max_length=10, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    tests = models.ManyToManyField(TestType)
+    availability = models.BooleanField(default=True)
+    add_by =models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test_name = models.CharField(max_length=20, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True)
     patient_name = models.CharField(max_length=255, null=True, blank=True)
@@ -27,7 +39,7 @@ class Order(models.Model):
     order_number = models.CharField(max_length=10, unique=True, editable=False)
     order_status = models.BooleanField(default=False)
     approvel_status = models.BooleanField(default=False)
-    
+    approval_date = models.DateTimeField(auto_now_add=False,null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.order_number:
@@ -36,7 +48,7 @@ class Order(models.Model):
 
     def generate_unique_order_number(self):
         # Generate a unique order number using UUID
-        return str(uuid.uuid4().hex[:10]).upper()
+        return str(uuid.uuid4().hex[:5]).upper()
 
     def __str__(self):
         return self.order_number

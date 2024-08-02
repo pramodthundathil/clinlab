@@ -146,7 +146,7 @@
                                                         {% for item in order %}
                                                         <li>
                                                             <div class="date">
-                                                                <a href="{%url 'OrderSingle' item.id %}" class="btn btn-outline-dark btn-sm mb-1">View</a>
+                                                                <a href="{%url 'OrderSingleFinished' item.id %}" class="btn btn-outline-dark btn-sm mb-1">View</a>
                                                                 <br>
                                                                 {% if item.order_status == True %}
                                                                 <span class="badge bg-success">Completed</span>

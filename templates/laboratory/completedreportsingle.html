@@ -1,0 +1,132 @@
+{% extends 'index.html' %} {% load static %} {% block content %}
+<style>
+    .patient-deatils h6{
+        display: inline;
+    }
+    .patient-deatils span{
+        color: green;
+    }
+</style>
+<div class="mobile-menu-overlay"></div>
+
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="title">
+                            <h4>Completed Report</h4>
+                        </div>
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'Index' %}">Home</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Add Test
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-right">
+                        <h4>
+                            Sample Number:
+                            <span id="datenow">{{ new_order.order_number }}</span>
+                        </h4>
+                        <p class="text-muted">Sampled On: ({{ new_order.created_date }})</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-box mb-30 p-3" style="overflow-x: auto;">
+                <div class="pd-20">
+                    <h4 class="text-blue h4">Patient Details</h4>
+                </div>
+                <a href="{%url 'lab_report' new_order.id %}" data-toggle="tooltip" title="Print Result" target="_blank" class="btn btn-outline-info mt-1"><i class="icon-copy dw dw-print"></i></a> 
+                <a href="" class="btn btn-outline-warning mt-1" data-toggle="tooltip" title="Print Invoice"><i class="icon-copy dw dw-invoice-1"></i></a>
+                <a href="{%url 'OrderSingle' new_order.id %}" class="btn btn-outline-info mt-1" data-toggle="tooltip" title="Edit Result"><i class="icon-copy dw dw-edit-1"></i></a>
+                <a href="{%url 'customer_single' new_order.patient.id %}" class="btn btn-outline-primary mt-1" data-toggle="tooltip" title="View Patient Profile"><i class="icon-copy dw dw-view"></i> </a>
+                <a href="{%url 'labreportdownload' new_order.id %}" class="btn btn-outline-dark mt-1" data-toggle="tooltip" title="Share Via Whatsapp"><i class="icon-copy dw dw-share-1"></i> </a>
+                <div class="pb-20 p-4 patient-deatils">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span>Patient Name:</span>
+                            <h6>{{new_order.patient_name}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Age:</span>
+                            <h6>{{new_order.patient.age}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Phone Number:</span>
+                            <h6>{{new_order.patient.phone_number}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Email:</span>
+                            <h6>{{new_order.patient.email}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Sample:</span>
+                            <h6>{{new_order.sample}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Doctor:</span>
+                            <h6>{{new_order.doctor}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Email:</span>
+                            <h6>{{new_order.hospital}}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Sample Date:</span>
+                            <h6>{{new_order.created_date}}</h6>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="card-box mb-30 p-3" style="overflow-x: auto;">
+                <div class="pd-20">
+                    <h4 class="text-blue h4">Report</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th>Investigation</th>
+                          <th>Result</th>
+                          <th>Reference Value</th>
+                            <th>Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in results %}
+                <tr >
+                    <td>{{forloop.counter}}</td>
+                    <td style="text-align: left !important;">{{item.test_type}}</td>
+                    <td><b> {{item.result_value}}  {{item.comments}} </b></td>
+                    <td style="text-align: center !important;">{{item.test_type.normal_range}}</td>
+                    <td style="border-right: .2px solid #4f505273;">{{item.test_type.unit}}</td>
+                </tr>
+                {% endfor %}
+                
+                
+            </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="footer-wrap pd-20 mb-20 card-box">
+    ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
+</div>
+
+{% endblock %}

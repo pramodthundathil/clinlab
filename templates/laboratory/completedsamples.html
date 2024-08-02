@@ -10,66 +10,89 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>Customer</h4>
+                            <h4>Completed Samples</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item">
-                                    <a href="{% url 'Index' %}">Home</a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">
-                                    Customers
-                                </li>
+                                <li class="breadcrumb-item"><a href="{%url 'Index'%}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Completed Samples</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-md-6 col-sm-12 text-right">
-                        {% for message in messages%}
-                        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
-                            <strong>Alert!</strong> {{message}}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        {% endfor %}
-                    </div>
+
                 </div>
             </div>
 
 
+
+            <!-- submission form model and rejection model  -->
+
+            <div class="modal fade" id="success-modal" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body text-center font-18">
+                            <h3 class="mb-20">Test Added To list!</h3>
+                            <div class="mb-30 text-center"><img src="{%static 'vendors/images/success.png' %}"></div>
+                            New Test added to list click done to reload <br><br>
+                            <a href="{%url 'SingleTests' %}" type="button" class="btn btn-primary">Done</a>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                    <div class="modal-content bg-danger text-white">
+                        <div class="modal-body text-center">
+                            <h3 class="text-white mb-15"><i class="fa fa-exclamation-triangle"></i> Alert</h3>
+                            <p>Test is not added somethig went wrong</p>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Export Datatable start -->
             <div class="card-box mb-30" style="overflow-x: auto;">
                 <div class="pd-20">
-                    <h4 class="text-blue h4">Customers</h4>
+                    <h4 class="text-blue h4">Pending Samples</h4>
                 </div>
                 <div class="pb-20">
                     <table class="table hover multiple-select-row data-table-export nowrap">
                         <thead>
                             <tr>
-                                <th>Sl. No</th>
-                                <th class="table-plus datatable-nosort">Patient Name</th>
-                                <th>Phone Number</th>
-                                <th>Email</th>
+                                <th>Sl. Order Number</th>
+                                <th class="table-plus datatable-nosort">Patient</th>
+                                <th>Sample</th>
+                                <th>Date and time</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in patients %}
+                            {% for item in order %}
                             <tr>
-                                <td>{{forloop.counter}}. <b></b></td>
-                                <td class="table-plus">{{item.first_name}} {{item.last_name}}</td>
-                                <td>{{item.phone_number}}</td>
-                                <td>{{item.email}}</td>
+                                <td>{{forloop.counter}}. <b>{{item.order_number}}</b></td>
+                                <td class="table-plus">{{item.patient_name}}</td>
+                                <td>{{item.sample}}</td>
+                                <td>{{item.created_date}}</td>
                                 <td>
-                                    <span class="badge bg-success">active</span>
+                                    {% if item.order_status == True %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{%url 'customer_single' item.id %}" class="btn btn-outline-info"><i
-                                            class="icon-copy dw dw-edit-1"></i></a>
+                                    <a href="{%url 'OrderSingleFinished' item.id %}" class="btn btn-outline-info"><i class="icon-copy dw dw-edit-1"></i></a>
 
                                     <!-- delete model start  -->
-                                    <a href="#" onclick="confirm ('Are you sure want to delete ??')" class="btn btn-outline-danger"
+                                    <a href="#" onclick="confirm ('Are you sure ??')" class="btn btn-outline-danger"
                                         data-toggle="modal" data-target="#confirmation-modal"><i
                                             class="icon-copy dw dw-delete-3"></i></a>
 
@@ -122,4 +145,5 @@
 <script src="{%static 'src/plugins/datatables/js/vfs_fonts.js' %}"></script>
 <!-- Datatable Setting js -->
 <script src="{%static 'vendors/scripts/datatable-setting.js' %}"></script>
+
 {% endblock %}

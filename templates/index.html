@@ -85,8 +85,8 @@
 		<div class="header-right">
 			<div class="dashboard-setting user-notification">
 				<div class="dropdown">
-					<a class="dropdown-toggle no-arrow" href="javascript:;" data-toggle="right-sidebar">
-						<i class="dw dw-settings2"></i>
+					<a href="{%url 'CreateSample' %}" class="btn btn-lg btn-primary btn-sm">
+						<i class="icon-copy dw dw-add"></i> Take Sample
 					</a>
 				</div>
 			</div>
@@ -284,7 +284,7 @@
 							<li><a href="{%url 'CreateSample' %}">Add Sample</a></li>
 							<!-- <li><a href="advanced-components.html">Add Results</a></li> -->
 							<li><a href="{%url 'pending_samples' %}">Pending Samples</a></li>
-							<li><a href="html5-editor.html">Finished Reports</a></li>
+							<li><a href="{%url 'completed_samples' %}">Finished Reports</a></li>
 							<!-- <li><a href="form-pickers.html"></a></li>
 							<li><a href="image-cropper.html">Image Cropper</a></li>
 							<li><a href="image-dropzone.html">Image Dropzone</a></li> -->
@@ -296,15 +296,11 @@
 							<span class="micon dw dw-syringe"></span><span class="mtext">Pathology</span>
 						</a>
 						<ul class="submenu">
-							<li><a href="basic-table.html">Comprehensive Tests</a></li>
+							<li><a href="{%url 'comprehensive_test' %}">Comprehensive Tests</a></li>
 							<li><a href="{%url 'SingleTests' %}">Single Tests</a></li>
 						</ul>
 					</li>
-					<li>
-						<a href="calendar.html" class="dropdown-toggle no-arrow">
-							<span class="micon dw dw-calendar1"></span><span class="mtext">Calendar</span>
-						</a>
-					</li>
+
 					<li class="dropdown">
 						<a href="javascript:;" class="dropdown-toggle">
 							<span class="micon dw dw-settings2"></span><span class="mtext"> Settings </span>
@@ -316,130 +312,9 @@
 
 						</ul>
 					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-paint-brush"></span><span class="mtext">Icons</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="font-awesome.html">FontAwesome Icons</a></li>
-							<li><a href="foundation.html">Foundation Icons</a></li>
-							<li><a href="ionicons.html">Ionicons Icons</a></li>
-							<li><a href="themify.html">Themify Icons</a></li>
-							<li><a href="custom-icon.html">Custom Icons</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-analytics-21"></span><span class="mtext">Charts</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="highchart.html">Highchart</a></li>
-							<li><a href="knob-chart.html">jQuery Knob</a></li>
-							<li><a href="jvectormap.html">jvectormap</a></li>
-							<li><a href="apexcharts.html">Apexcharts</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-right-arrow1"></span><span class="mtext">Additional Pages</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="video-player.html">Video Player</a></li>
-							<li><a href="login.html">Login</a></li>
-							<li><a href="forgot-password.html">Forgot Password</a></li>
-							<li><a href="reset-password.html">Reset Password</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-browser2"></span><span class="mtext">Error Pages</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="400.html">400</a></li>
-							<li><a href="403.html">403</a></li>
-							<li><a href="404.html">404</a></li>
-							<li><a href="500.html">500</a></li>
-							<li><a href="503.html">503</a></li>
-						</ul>
-					</li>
-
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-copy"></span><span class="mtext">Extra Pages</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="blank.html">Blank</a></li>
-							<li><a href="contact-directory.html">Contact Directory</a></li>
-							<li><a href="blog.html">Blog</a></li>
-							<li><a href="blog-detail.html">Blog Detail</a></li>
-							<li><a href="product.html">Product</a></li>
-							<li><a href="product-detail.html">Product Detail</a></li>
-							<li><a href="faq.html">FAQ</a></li>
-							<li><a href="profile.html">Profile</a></li>
-							<li><a href="gallery.html">Gallery</a></li>
-							<li><a href="pricing-table.html">Pricing Tables</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-list3"></span><span class="mtext">Multi Level Menu</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="javascript:;">Level 1</a></li>
-							<li><a href="javascript:;">Level 1</a></li>
-							<li><a href="javascript:;">Level 1</a></li>
-							<li class="dropdown">
-								<a href="javascript:;" class="dropdown-toggle">
-									<span class="micon fa fa-plug"></span><span class="mtext">Level 2</span>
-								</a>
-								<ul class="submenu child">
-									<li><a href="javascript:;">Level 2</a></li>
-									<li><a href="javascript:;">Level 2</a></li>
-								</ul>
-							</li>
-							<li><a href="javascript:;">Level 1</a></li>
-							<li><a href="javascript:;">Level 1</a></li>
-							<li><a href="javascript:;">Level 1</a></li>
-						</ul>
-					</li>
 					<li>
-						<a href="sitemap.html" class="dropdown-toggle no-arrow">
-							<span class="micon dw dw-diagram"></span><span class="mtext">Sitemap</span>
-						</a>
-					</li>
-					<li>
-						<a href="chat.html" class="dropdown-toggle no-arrow">
-							<span class="micon dw dw-chat3"></span><span class="mtext">Chat</span>
-						</a>
-					</li>
-					<li>
-						<a href="invoice.html" class="dropdown-toggle no-arrow">
-							<span class="micon dw dw-invoice"></span><span class="mtext">Invoice</span>
-						</a>
-					</li>
-					<li>
-						<div class="dropdown-divider"></div>
-					</li>
-					<li>
-						<div class="sidebar-small-cap">Extra</div>
-					</li>
-					<li>
-						<a href="javascript:;" class="dropdown-toggle">
-							<span class="micon dw dw-edit-2"></span><span class="mtext">Documentation</span>
-						</a>
-						<ul class="submenu">
-							<li><a href="introduction.html">Introduction</a></li>
-							<li><a href="getting-started.html">Getting Started</a></li>
-							<li><a href="color-settings.html">Color Settings</a></li>
-							<li><a href="third-party-plugins.html">Third Party Plugins</a></li>
-						</ul>
-					</li>
-					<li>
-						<a href="https://dropways.github.io/deskapp-free-single-page-website-template/" target="_blank"
-							class="dropdown-toggle no-arrow">
-							<span class="micon dw dw-paper-plane1"></span>
-							<span class="mtext">Landing Page <img src="vendors/images/coming-soon.png" alt=""
-									width="25"></span>
+						<a href="{%url 'calender' %}" class="dropdown-toggle no-arrow">
+							<span class="micon dw dw-calendar1"></span><span class="mtext">Calendar</span>
 						</a>
 					</li>
 				</ul>
@@ -476,21 +351,26 @@
 							<a href="{%url 'CreateSample' %}" class="btn btn-lg btn-primary">
 								<i class="icon-copy dw dw-add"></i> Take Sample
 							</a>
-
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-xl-3 mb-30">
-					<div class="card-box height-100-p widget-style1">
+					<div class="card-box p-3 widget-style1">
 						<div class="d-flex flex-wrap align-items-center">
 							<div class="progress-data">
-								<div id="chart"></div>
+								<div id="">
+									<i class="micon dw dw-file-138" style="font-size: 40px;"></i>
+								</div>
 							</div>
 							<div class="widget-data">
-								<div class="h4 mb-0">2020</div>
-								<div class="weight-600 font-14">Contact</div>
+								<div class="h4 mb-0">{{pendinf_samples_count}}
+
+								</div>
+								<div class="weight-600 font-14">Pending Samples</div>
+								<a href="{%url 'pending_samples' %}" class="btn btn-sm btn-outline-dark">View</a>
+
 							</div>
 						</div>
 					</div>
@@ -499,11 +379,16 @@
 					<div class="card-box height-100-p widget-style1">
 						<div class="d-flex flex-wrap align-items-center">
 							<div class="progress-data">
-								<div id="chart2"></div>
+								<div id="">
+									<i class="icon-copy dw dw-file-135" style="font-size: 40px;"></i>
+
+								</div>
 							</div>
 							<div class="widget-data">
-								<div class="h4 mb-0">400</div>
-								<div class="weight-600 font-14">Deals</div>
+								<div class="h4 mb-0">{{recent_complete_count}}</div>
+								<div class="weight-600 font-14">Competed Samples</div>
+								<a href="" class="btn btn-sm btn-outline-dark">View</a>
+
 							</div>
 						</div>
 					</div>
@@ -512,11 +397,16 @@
 					<div class="card-box height-100-p widget-style1">
 						<div class="d-flex flex-wrap align-items-center">
 							<div class="progress-data">
-								<div id="chart3"></div>
+								<div id="">
+									<i class="icon-copy dw dw-file-109" style="font-size: 40px;"></i>
+
+								</div>
 							</div>
 							<div class="widget-data">
 								<div class="h4 mb-0">350</div>
-								<div class="weight-600 font-14">Campaign</div>
+								<div class="weight-600 font-14">Income</div>
+								<a href="" class="btn btn-sm btn-outline-dark">View</a>
+
 							</div>
 						</div>
 					</div>
@@ -525,11 +415,16 @@
 					<div class="card-box height-100-p widget-style1">
 						<div class="d-flex flex-wrap align-items-center">
 							<div class="progress-data">
-								<div id="chart4"></div>
+								<div id="">
+									<i class="icon-copy dw dw-file-1111" style="font-size: 40px;"></i>
+
+								</div>
 							</div>
 							<div class="widget-data">
 								<div class="h4 mb-0">$6060</div>
-								<div class="weight-600 font-14">Worth</div>
+								<div class="weight-600 font-14">Expeses</div>
+								<a href="" class="btn btn-sm btn-outline-dark">View</a>
+
 							</div>
 						</div>
 					</div>
@@ -549,151 +444,49 @@
 					</div>
 				</div>
 			</div>
-			<div class="card-box mb-30">
-				<h2 class="h4 pd-20">Best Selling Products</h2>
-				<table class="data-table table nowrap">
+			<div class="card-box mb-30" style="overflow-x: auto;">
+				<h2 class="h4 pd-20">Completed Samples</h2>
+				<table class="data-table table">
 					<thead>
 						<tr>
-							<th class="table-plus datatable-nosort">Product</th>
-							<th>Name</th>
-							<th>Color</th>
-							<th>Size</th>
-							<th>Price</th>
-							<th>Oty</th>
-							<th class="datatable-nosort">Action</th>
+							<th>Sl. Order Number</th>
+							<th class="table-plus datatable-nosort">Patient</th>
+							<th>Sample</th>
+							<th>Date and time</th>
+							<th>Status</th>
+							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
+						{% for item in completed_samples %}
 						<tr>
-							<td class="table-plus">
-								<img src="vendors/images/product-1.jpg" width="70" height="70" alt="">
+							<td>{{forloop.counter}}. <b>{{item.order_number}}</b></td>
+							<td class="table-plus">{{item.patient_name}}</td>
+							<td>{{item.sample}}</td>
+							<td>{{item.created_date}}</td>
+							<td>
+								{% if item.order_status == True %}
+								<span class="badge bg-success">Completed</span>
+								{% else %}
+								<span class="badge bg-warning">Pending</span>
+								{% endif %}
 							</td>
 							<td>
-								<h5 class="font-16">Shirt</h5>
-								by John Doe
-							</td>
-							<td>Black</td>
-							<td>M</td>
-							<td>$1000</td>
-							<td>1</td>
-							<td>
-								<div class="dropdown">
-									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-										role="button" data-toggle="dropdown">
-										<i class="dw dw-more"></i>
-									</a>
-									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-										<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-									</div>
-								</div>
+								<a href="{%url 'OrderSingleFinished' item.id %}" class="btn btn-outline-info"><i
+										class="icon-copy dw dw-edit-1"></i></a>
+
+								<!-- delete model start  -->
+								<a href="#" onclick="confirm ('Are you sure ??')" class="btn btn-outline-danger"
+									data-toggle="modal" data-target="#confirmation-modal"><i
+										class="icon-copy dw dw-delete-3"></i></a>
+
+								<!-- delete model end  -->
+
 							</td>
 						</tr>
-						<tr>
-							<td class="table-plus">
-								<img src="vendors/images/product-2.jpg" width="70" height="70" alt="">
-							</td>
-							<td>
-								<h5 class="font-16">Boots</h5>
-								by Lea R. Frith
-							</td>
-							<td>brown</td>
-							<td>9UK</td>
-							<td>$900</td>
-							<td>1</td>
-							<td>
-								<div class="dropdown">
-									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-										role="button" data-toggle="dropdown">
-										<i class="dw dw-more"></i>
-									</a>
-									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-										<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-									</div>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="table-plus">
-								<img src="vendors/images/product-3.jpg" width="70" height="70" alt="">
-							</td>
-							<td>
-								<h5 class="font-16">Hat</h5>
-								by Erik L. Richards
-							</td>
-							<td>Orange</td>
-							<td>M</td>
-							<td>$100</td>
-							<td>4</td>
-							<td>
-								<div class="dropdown">
-									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-										role="button" data-toggle="dropdown">
-										<i class="dw dw-more"></i>
-									</a>
-									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-										<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-									</div>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="table-plus">
-								<img src="vendors/images/product-4.jpg" width="70" height="70" alt="">
-							</td>
-							<td>
-								<h5 class="font-16">Long Dress</h5>
-								by Renee I. Hansen
-							</td>
-							<td>Gray</td>
-							<td>L</td>
-							<td>$1000</td>
-							<td>1</td>
-							<td>
-								<div class="dropdown">
-									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-										role="button" data-toggle="dropdown">
-										<i class="dw dw-more"></i>
-									</a>
-									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-										<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-									</div>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="table-plus">
-								<img src="vendors/images/product-5.jpg" width="70" height="70" alt="">
-							</td>
-							<td>
-								<h5 class="font-16">Blazer</h5>
-								by Vicki M. Coleman
-							</td>
-							<td>Blue</td>
-							<td>M</td>
-							<td>$1000</td>
-							<td>1</td>
-							<td>
-								<div class="dropdown">
-									<a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-										role="button" data-toggle="dropdown">
-										<i class="dw dw-more"></i>
-									</a>
-									<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-										<a class="dropdown-item" href="#"><i class="dw dw-eye"></i> View</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-										<a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
-									</div>
-								</div>
-							</td>
-						</tr>
+						{% endfor %}
+
+
 					</tbody>
 				</table>
 			</div>

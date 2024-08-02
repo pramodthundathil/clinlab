@@ -67,13 +67,16 @@
             border: 1px solid #2a8fed;
             padding: 8px;
             text-align: left;
+            -webkit-print-color-adjust: exact; 
         }
         .report-table thead th {
             background-color: #2a8fed;
+            -webkit-print-color-adjust: exact; 
         }
         th,td {
-            padding: 10px !important;
-            border-bottom: .5px solid #2a8fed;
+            padding: 20px !important;
+            border-bottom: .2px solid #4f505273;
+            -webkit-print-color-adjust: exact; 
         }
         .signature-block {
             display: flex;
@@ -89,10 +92,17 @@
             font-size: 14px;
             margin-top: 20px;
         }
+        table{
+            border: .2px solid #4f505273;
+            margin-right: 20px !important;
+            
+            /* display: block; */
+            /* margin: auto; */
+        }
     </style>
 </head>
 <body onload="printInvoice()">
-    <div class="container">
+    <div class="container" id="invoice-content">
         <div class="header" style="text-transform: uppercase;" >
             <img src="{{lab.logo_of_lab.url}}" alt="Smart Pathology Lab">
             <h1>{{user.first_name}} {{user.last_name}}</h1>
@@ -137,7 +147,7 @@
                     <td style="text-align: left !important;">{{item.test_type}}</td>
                     <td><b> {{item.result_value}}  {{item.comments}} </b></td>
                     <td style="text-align: center !important;">{{item.test_type.normal_range}}</td>
-                    <td>{{item.test_type.unit}}</td>
+                    <td style="border-right: .2px solid #4f505273;">{{item.test_type.unit}}</td>
                 </tr>
                 {% endfor %}
                 
@@ -166,8 +176,8 @@
         <div class="footer">
             Thanks for Reference<br>
             ****End of Report****<br>
-            Generated on: 02 Dec, 2022 05:00 PM<br>
-            Page 1 of 1
+            <!-- Generated on: 02 Dec, 2022 05:00 PM<br> -->
+            <!-- Page 1 of 1 -->
         </div>
     </div>
 

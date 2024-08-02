@@ -27,6 +27,14 @@
               <span id="datenow">{{ new_order.order_number }}</span>
             </h4>
             <p class="text-muted">Sampled On: ({{ new_order.created_date }})</p>
+            {% for message in messages%}
+                        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                            <strong>Alert!</strong> {{message}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
           </div>
         </div>
       </div>
@@ -120,7 +128,7 @@
                   style="width: 100%; height: 38px; padding: 6px !important"
                 >
                   <option value="" selected disabled>Select Test</option>
-                  <optgroup label="Patient Deatils">
+                  <optgroup label="Test Details">
                     {% for item in tests %}
                     <option value="{{item.id}}">{{item}}</option>
                     {% endfor %}
@@ -129,13 +137,19 @@
               </div>
               <div class="col-md-6">
                 <label for="">Select Comprehensive Test</label>
-                <input
-                  id="patientForm"
-                  type="text"
-                  class="form-control"
-                  name="test"
-                  placeholder="Test"
-                />
+                <select
+                  class="custom-select2 form-control"
+                  name="patient"
+                  id="Comprehensive"
+                  style="width: 100%; height: 38px; padding: 6px !important"
+                >
+                  <option value="" selected disabled>Select Test</option>
+                  <optgroup label="Test Details">
+                    {% for item in c_tests %}
+                    <option value="{{item.id}}">{{item.name}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
               </div>
             </div>
           </form>
@@ -148,10 +162,10 @@
     <div class="pd-20 mb-20 card-box">
         <div class="row text-center">
             <div class="col-md-4">
-                <a href="" class="btn btn-success">Approve</a>
+                <a href="{%url 'ApproveReport' new_order.id %}" class="btn btn-success">Approve</a>
             </div>
             <div class="col-md-4">
-                <a href="{%url 'lab_report' new_order.id %}" target="_blank" onclick="printInvoice()" class="btn btn-warning">Print Result</a>
+                <a href="{%url 'lab_report' new_order.id %}" target="_blank"  class="btn btn-warning">Print Result</a>
             </div>
             <div class="col-md-4">
                 <a href="" class="btn btn-info">Print Result</a>
@@ -450,7 +464,36 @@
               }
           });
       });
+      
 
+      $('#Comprehensive').on('change', function () {
+          var testid = $(this).val();
+          var orderId = {{ new_order.id }};
+          var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+          $.ajax({
+              url: "{% url 'conprehensive_addtest_ajax' new_order.id %}",
+              type: "POST",
+              data: {
+                  testid: testid,
+                  csrfmiddlewaretoken: csrfToken
+              },
+              success: function (response) {
+                  if (response.success) {
+                      // alert('Order updated successfully.');
+                      $("#testdetails").html(response.html);
+                      console.log(response)
+                      location.reload()
+                      // Optionally update the DOM with new patient details
+                  } else {
+                      alert('Failed to update order.');
+                  }
+              },
+              error: function (xhr, status, error) {
+                  alert('An error occurred while updating the order.');
+              }
+          });
+      });
 
 
       $('.result_val').on('input', function () {

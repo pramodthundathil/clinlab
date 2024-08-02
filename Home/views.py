@@ -7,9 +7,25 @@ from .decorators import admin_only, unautenticated_user
 from django.contrib.auth.decorators import login_required
 from .models import Units, LabDetails, Patient
 from Clinic.models import Order, TestResult, TestType
+from datetime import timedelta,  datetime
+
+today = datetime.now()
+daybeforeyesterday = today - timedelta(2)
 
 def Index(request):
-    return render(request,"index.html")
+    pending_samples_count = Order.objects.filter(order_status = False).count()
+    completed_samples = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today)
+    
+    context = {
+        "pendinf_samples_count":pending_samples_count,
+        "recent_complete_count":len(completed_samples),
+        "completed_samples":completed_samples
+    }
+    return render(request,"index.html",context)
+
+
+def calender(request):
+    return render(request,'calender.html')
 
 
 

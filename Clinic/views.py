@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import TestType, Order, TestResult
+from .models import TestType, Order, TestResult, ComprehensiveTest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from Home.models import Units, Patient, LabDetails
@@ -61,6 +61,78 @@ def add_test_type(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 
+# comprehensive tests 
+def comprehensive_test(request):
+    tests = ComprehensiveTest.objects.filter(add_by = request.user) 
+    context = {
+        "tests":tests
+    }
+    return render(request,'pathology/comprehensive_tests.html',context)
+
+
+def AddComprehensivetest(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        specimen = request.POST.get('specimen')
+        description = request.POST.get('description')
+        try:
+            test = ComprehensiveTest.objects.create(name = name,specimen = specimen, description = description, add_by = request.user )
+            test.save()
+        except:
+            messages.info(request,"Something worng...")
+            return redirect("comprehensive_test")
+        return redirect("Comprehensive_single",pk = test.id)
+    else:
+        return redirect("comprehensive_test")
+        
+
+def delete_comprehensive_test(request,pk):
+    test = ComprehensiveTest.objects.get(id = pk)
+    test.delete()
+    messages.info(request, "Test Deleted success....")
+    return redirect("comprehensive_test")
+
+def Comprehensive_single(request,pk):
+    test = ComprehensiveTest.objects.get(id = pk)
+    tests = TestType.objects.all()
+
+
+    context = {
+        'test':test,
+        "tests":tests
+    }
+    return render(request,'pathology/comprehensive_test_add_single.html',context)
+
+@csrf_exempt
+def addconprehensivetest_ajax(request,pk):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        com_test = get_object_or_404(ComprehensiveTest, id=pk)
+        testid = request.POST.get('testid')
+        test = TestType.objects.get(id = testid)
+        
+        if test:
+            try:
+                com_test.tests.add(test)
+                com_test.save()
+                
+                testdeatil_table = render_to_string('ajaxtemplates/comprehensivetable.html', {'results': com_test})
+                return JsonResponse({'success': True,"error": "testdeatil_table"})
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+def testdeletefromcomtest(request,pk,tk):
+    ctest = ComprehensiveTest.objects.get(id = pk)
+    test = TestType.objects.get(id = tk)
+    ctest.tests.remove(test)
+    messages.info(request,"One item removed from test..")
+    return redirect("Comprehensive_single", pk=pk)
+
+
 # 3. Order Creation Sample Collection
 
 def CreateSample(request):
@@ -73,6 +145,22 @@ def OrderSingle(request,pk):
     new_order = Order.objects.get(id = pk)
     patient = Patient.objects.filter(user = request.user)
     tests = TestType.objects.all()
+    c_tests = ComprehensiveTest.objects.all()
+    results  = TestResult.objects.filter(order = new_order)
+    context = {
+        "new_order":new_order,
+        "patient":patient,
+        "tests":tests,
+        "results":results,
+        "c_tests":c_tests
+    }
+    
+    return render(request,"laboratory/addsample.html",context) 
+
+def OrderSingleFinished(request,pk):
+    new_order = Order.objects.get(id = pk)
+    patient = Patient.objects.filter(user = request.user)
+    tests = TestType.objects.all()
     results  = TestResult.objects.filter(order = new_order)
     context = {
         "new_order":new_order,
@@ -80,7 +168,9 @@ def OrderSingle(request,pk):
         "tests":tests,
         "results":results
     }
-    return render(request,"laboratory/addsample.html",context) 
+    
+    return render(request,"laboratory/completedreportsingle.html",context)
+    
 
 
 # patient Autocomplete on Order details 
@@ -213,13 +303,22 @@ def update_order_hospital(request, pk):
 # NOTE: sample is sorted by order and filtered by creation user
 
 def pending_samples(request):
-    order =  Order.objects.filter(user = request.user)
+    order =  Order.objects.filter(user = request.user,order_status = False)
 
 
     context = {
         "order":order
     }
     return render(request,"laboratory/pendingsamles.html",context)
+
+def completed_samples(request):
+    order =  Order.objects.filter(user = request.user,order_status = True)
+
+
+    context = {
+        "order":order
+    }
+    return render(request,"laboratory/completedsamples.html",context)
 
 
 
@@ -245,6 +344,28 @@ def addtest_ajax(request,pk):
             return JsonResponse({'success': False, 'error': 'No patient selected'})
     
     return JsonResponse({'success': False, 'error': 'Invalid request'}) 
+
+@csrf_exempt
+def conprehensive_addtest_ajax(request,pk):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        order = get_object_or_404(Order, id=pk)
+        testid = request.POST.get('testid')
+        test = ComprehensiveTest.objects.get(id = testid)
+        
+        if test:
+            try:
+                for i in test.tests.all():
+                    result = TestResult.objects.create(order = order, test_type = i, technician = request.user, comments = "" )
+                    result.save()
+                result = TestResult.objects.filter(order = order)
+                testdeatil_table = render_to_string('ajaxtemplates/testdeatil_table.html', {'results': result})
+                return JsonResponse({'success': True,"html": testdeatil_table})
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 
@@ -324,6 +445,45 @@ def lab_report(request,pk):
         "lab":lab
     }
     return render(request,'laboratory/labreport.html',context)
+
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from io import BytesIO
+
+def labreportdownload(request,pk):
+    # Render HTML content
+    order = Order.objects.get(id = pk) 
+    result = TestResult.objects.filter(order = order)
+    lab = {}
+    try:
+        lab = LabDetails.objects.get(user = request.user)
+    except:
+        messages.warning(request,"Please Fill out the address of the lab...")
+        return redirect("profile")
+    context = {
+        "result":result,
+        "order":order,
+        "lab":lab
+    }
+    html_string = render_to_string('laboratory/labreport.html', context)
+
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
+    if not pdf.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        return response
+    else:
+        return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
+from datetime import datetime
+
+def ApproveReport(request,pk):
+    order = Order.objects.get(id = pk)
+    order.approvel_status = True
+    order.order_status = True
+    order.approval_date = datetime.now()
+    order.save()
+    return redirect("OrderSingleFinished",pk = pk )
 
     
 
