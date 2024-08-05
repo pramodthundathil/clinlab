@@ -1,0 +1,40 @@
+<table class="table hover multiple-select-row data-table-export nowrap">
+    <thead>
+        <tr>
+            <th>Sl.</th>
+            <th class="table-plus datatable-nosort">Test</th>
+            <th>unit</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in price %}
+        <tr>
+            <td>{{forloop.counter}}. </td>
+            <td class="table-plus">{{item.test}}</td>
+            <td>{{item.test.unit}}</td>
+            <td><input type="number" value="{{item.price}}" class="form-control" id="item_price" data-price-id="{{item.id}}"></td>
+            <td>
+                {% if item.order_status == True %}
+                <span class="badge bg-success">Available</span>
+                {% else %}
+                <span class="badge bg-success">Available</span>
+                {% endif %}
+            </td>
+            <td>
+                <!-- delete model start  -->
+                <a href="#" onclick="confirm ('Are you sure ??')" class="btn btn-outline-danger"
+                    data-toggle="modal" data-target="#confirmation-modal"><i
+                        class="icon-copy dw dw-delete-3"></i></a>
+
+                <!-- delete model end  -->
+
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </tbody>
+</table>

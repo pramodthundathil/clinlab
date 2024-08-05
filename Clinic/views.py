@@ -6,6 +6,10 @@ from Home.models import Units, Patient, LabDetails
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+from datetime import timedelta,  datetime
+
+today = datetime.now()
+daybeforeyesterday = today - timedelta(2)
 
 
 
@@ -484,6 +488,14 @@ def ApproveReport(request,pk):
     order.approval_date = datetime.now()
     order.save()
     return redirect("OrderSingleFinished",pk = pk )
+
+
+def RecentlycompletedTests(request):
+    order = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today, user = request.user)
+    context = {
+        "order":order
+    }
+    return render(request,"laboratory/recentlycompletedtests.html",context)
 
     
 

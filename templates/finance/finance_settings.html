@@ -1,0 +1,238 @@
+{% extends 'index.html' %}{% load static %}{% block content %}
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="title">
+                            <h4>Price Settings</h4>
+                        </div>
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Pricing</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-right">
+                        <div class="dropdown">
+                            <!-- <button class="btn btn-lg btn-primary" data-toggle="modal"
+                                data-target="#bd-example-modal-lg">
+                                <i class="icon-copy dw dw-add"></i> Add Price To Test
+                            </button> -->
+
+                            <!-- modal for test adding  -->
+                            <!-- <div class="modal fade bs-example-modal-lg" id="bd-example-modal-lg" tabindex="-1"
+                                role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myLargeModalLabel">Add Price to Test</h4>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">×</button>
+                                        </div>
+                                        <div class="modal-body">
+
+
+                                            <div class="row text-left">
+                                                <div class="col-md-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Test Name</label>
+                                                        <select class="custom-select2 form-control" name="patient"
+                                                            id="addtest"
+                                                            style="width: 100%; height: 38px; padding: 6px !important">
+                                                            <option value="" selected disabled>Select Test</option>
+                                                            <optgroup label="Test Details">
+                                                                {% for item in tests %}
+                                                                <option value="{{item.id}}">{{item}}</option>
+                                                                {% endfor %}
+                                                            </optgroup>
+                                                        </select>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>price</label>
+                                                        <input type="number" class="form-control" name="price">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Add Price</button>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- submission form model and rejection model  -->
+
+                            <div class="modal fade" id="success-modal" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body text-center font-18">
+                                            <h3 class="mb-20">Test Added To list!</h3>
+                                            <div class="mb-30 text-center"><img
+                                                    src="{%static 'vendors/images/success.png' %}"></div>
+                                            Price added to list click done to reload <br><br>
+                                            <a href="{%url 'Finance_settings' %}" type="button"
+                                                class="btn btn-primary">Done</a>
+
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog"
+                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-dialog-centered">
+                                    <div class="modal-content bg-danger text-white">
+                                        <div class="modal-body text-center">
+                                            <h3 class="text-white mb-15"><i class="fa fa-exclamation-triangle"></i>
+                                                Alert</h3>
+                                            <p>Test is not added somethig went wrong</p>
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Ok</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="alert-modal2" tabindex="-1" role="dialog"
+                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-dialog-centered">
+                                    <div class="modal-content bg-warning text-white">
+                                        <div class="modal-body text-center">
+                                            <h3 class="text-white mb-15"><i class="fa fa-exclamation-triangle"></i>
+                                                Alert</h3>
+                                            <p>This test price is already exist in database</p>
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Ok</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-box mb-30" style="overflow-x: auto;">
+                <div class="pd-20">
+                    <h4 class="text-blue h4">Add Price</h4>
+                    <form id="add-price-form" method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="">Select Test</label>
+                                <select
+                                  class="custom-select2 form-control"
+                                  name="test"
+                                  id="test"
+                                  style="width: 100%; height: 38px; padding: 6px !important"
+                                >
+                                  <option value="" selected disabled>Select Test</option>
+                                  <optgroup label="Test Details">
+                                    {% for item in tests %}
+                                    <option value="{{item.id}}">{{item}}</option>
+                                    {% endfor %}
+                                  </optgroup>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Enter Price</label>
+                                <input type="number" name="price" class="form-control" required placeholder="Price of Test">
+
+                            </div>
+                            <div class="col-md-12">
+                                <button class="btn btn-primary mt-1" type="submit">Add Price</button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-box mb-30" style="overflow-x: auto;">
+                <div class="pd-20">
+                    <h4 class="text-blue h4">My Pricing</h4>
+                </div>
+                <div class="pb-20">
+                    {% include 'ajaxtemplates/priceslabtable.html'%}
+                </div>
+            </div>
+            <!-- Export Datatable End -->
+
+
+        </div>
+
+        <div class="footer-wrap pd-20 mb-20 card-box">
+            ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
+        </div>
+    </div>
+</div>
+<!-- js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    $(document).ready(function () {
+        console.log("Ajax Loaded.......");
+        $(".custom-select2").select2();
+        $('#add-price-form').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            $.ajax({
+                url: "{% url 'add_price_slab' %}", // Your Django view URL
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+                        $('#bd-example-modal-lg').modal('hide'); // Hide the add test modal
+                        $('#success-modal').modal('show'); // Show success modal
+                    } else {
+                        console.log("error......................1234...")
+
+                        $('#bd-example-modal-lg').modal('hide'); // Hide the add test modal
+                        $('#alert-modal2').modal('show'); // Show alert modal
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("error.........................")
+                    $('#bd-example-modal-lg').modal('hide'); // Hide the add test modal
+                    $('#alert-modal').modal('show'); // Show alert modal
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<script src="{%static 'src/plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/dataTables.responsive.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{%static 'vendors/scripts/dashboard.js' %}"></script>
+
+
+<!-- buttons for Export datatable -->
+<script src="{%static 'src/plugins/datatables/js/dataTables.buttons.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.print.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.html5.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/buttons.flash.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/pdfmake.min.js' %}"></script>
+<script src="{%static 'src/plugins/datatables/js/vfs_fonts.js' %}"></script>
+<!-- Datatable Setting js -->
+<script src="{%static 'vendors/scripts/datatable-setting.js' %}"></script>
+
+
+{% endblock %}

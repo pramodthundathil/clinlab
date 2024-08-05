@@ -9,12 +9,12 @@ from .models import Units, LabDetails, Patient
 from Clinic.models import Order, TestResult, TestType
 from datetime import timedelta,  datetime
 
-today = datetime.now()
+today = datetime.now() + timedelta(1)
 daybeforeyesterday = today - timedelta(2)
 
 def Index(request):
-    pending_samples_count = Order.objects.filter(order_status = False).count()
-    completed_samples = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today)
+    pending_samples_count = Order.objects.filter(order_status = False, user = request.user).count()
+    completed_samples = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today, user = request.user)
     
     context = {
         "pendinf_samples_count":pending_samples_count,
@@ -183,6 +183,8 @@ def customer_single(request,pk):
     }
 
     return render(request,"laboratory/patientsingle.html",context)
+
+
 
 
 

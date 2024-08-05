@@ -1,0 +1,115 @@
+{% extends 'index.html' %}{% load static %}{% block content %}
+
+<div class="mobile-menu-overlay"></div>
+
+	<div class="main-container">
+		<div class="pd-ltr-20 xs-pd-20-10">
+			<div class="min-height-200px">
+				<div class="page-header">
+					<div class="row">
+						<div class="col-md-6 col-sm-12">
+							<div class="title">
+								<h4>Form</h4>
+							</div>
+							<nav aria-label="breadcrumb" role="navigation">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+									<li class="breadcrumb-item active" aria-current="page">Invoice</li>
+								</ol>
+							</nav>
+						</div>
+						<div class="col-md-6 col-sm-12 text-right">
+							<div class="dropdown">
+								<a class="btn btn-primary" href="#" role="button" data-toggle="dropdown">
+									Print Invoice
+								</a>
+                                <a href="" class="btn btn-warning">Make Ajustment And Accept</a>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="invoice-wrap">
+					<div class="invoice-box">
+						<div class="invoice-header">
+							<div class="logo text-center">
+								<img src="vendors/images/deskapp-logo.png" alt="">
+							</div>
+						</div>
+						<h4 class="text-center mb-30 weight-600">INVOICE</h4>
+						<div class="row pb-30">
+							<div class="col-md-6">
+								<h5 class="mb-15">Client Name:{{invoice.order.patient_name}}</h5>
+								<p class="font-14 mb-5">Date Issued: <strong class="weight-600">{{invoice.date_time}}</strong></p>
+								<p class="font-14 mb-5">Invoice No: <strong class="weight-600">{{invoice.invoice_number}}</strong></p>
+							</div>
+							<div class="col-md-6">
+								<div class="text-right">
+									<p class="font-14 mb-5">Your Name: {{request.user.first_name}} </strong></p>
+									<p class="font-14 mb-5">Your Address</p>
+									<p class="font-14 mb-5">City</p>
+									<p class="font-14 mb-5">Postcode</p>
+								</div>
+							</div>
+						</div>
+						<div class="invoice-desc pb-30">
+							<div class="invoice-desc-head clearfix">
+								<div class="invoice-sub">Description</div>
+								<div class="invoice-rate">Rate</div>
+								<div class="invoice-subtotal">Subtotal</div>
+							</div>
+							<div class="invoice-desc-body">
+								<ul>
+                                    {% for item in invoice_items %}
+									<li class="clearfix">
+										<div class="invoice-sub">{{item.TestPrice.test}}</div>
+										<div class="invoice-rate">Rs. {{item.price}}</div>
+										<!-- <div class="invoice-hours">{{item.price}}</div> -->
+										<div class="invoice-subtotal"><span class="weight-600">Rs {{item.price}}</span></div>
+									</li>
+                                    {% endfor %}
+                                    <li class="clearfix">
+										<div class="invoice-sub">Other Amount</div>
+										<div class="invoice-rate">{{invoice.adjustment}}</div>
+										<!-- <div class="invoice-hours">{{item.price}}</div> -->
+										<div class="invoice-subtotal"><span class="weight-600">Rs {{invoice.adjustment}}</span></div>
+									</li>
+                                    <li class="clearfix">
+										<div class="invoice-sub">Discount</div>
+										<div class="invoice-rate">{{invoice.discount}}</div>
+										<!-- <div class="invoice-hours">{{item.price}}</div> -->
+										<div class="invoice-subtotal"><span class="weight-600">Rs {{invoice.discount}}</span></div>
+									</li>
+									
+								</ul>
+							</div>
+							<div class="invoice-desc-footer">
+								<div class="invoice-desc-head clearfix">
+									<div class="invoice-sub">Info</div>
+									<div class="invoice-rate">Due By</div>
+									<div class="invoice-subtotal">Total Due</div>
+								</div>
+								<div class="invoice-desc-body">
+									<ul>
+										<li class="clearfix">
+											<div class="invoice-sub">
+												<p class="font-14 mb-5">Invoice Number: <strong class="weight-600">{{invoice.invoice_number}}</strong></p>
+												<p class="font-14 mb-5">Payemnt Status: <strong class="weight-600"><span class="badge bg-success">Paid</span></strong></p>
+											</div>
+											<div class="invoice-rate font-10 weight-600">{{invoice.date_time}}</div>
+											<div class="invoice-subtotal"><span class="weight-600 font-24 text-danger">Rs.{{invoice.total_payable}}</span></div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<h4 class="text-center pb-20">Thank You!!</h4>
+					</div>
+				</div>
+			</div>
+			<div class="footer-wrap pd-20 mb-20 card-box">
+                ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
+            </div>
+		</div>
+	</div>
+{% endblock %}
