@@ -19,7 +19,7 @@ class Invoce(models.Model):
     order = models.OneToOneField(Order,on_delete=models.SET_NULL, null=True, blank=True)
     invoice_number = models.CharField(max_length=20, unique=True, editable=False)
     date_time = models.DateTimeField(auto_now_add=True)
-    total_amount = models.FloatField(null=True, blank=True)
+    total_amount = models.FloatField(null=True, blank=True, default=0)
     discount = models.FloatField(null=True, blank=True, default=0)
     adjustment = models.FloatField(null=True, blank=True, default=0)
     total_payable = models.FloatField()

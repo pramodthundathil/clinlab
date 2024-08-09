@@ -77,7 +77,7 @@ def generete_invoice(request,pk):
         invoice = Invoce.objects.create(order = order, user = request.user,total_payable = 0)
         invoice.save()
     except:
-        if Invoce.objects.get(order = order):
+        if Invoce.objects.filter(order = order).exists():
             invoice = Invoce.objects.get(order = order)
         return redirect("get_invoice", pk = invoice.id )
     
@@ -86,12 +86,15 @@ def generete_invoice(request,pk):
         print(i)
         if TestPriceSlab.objects.filter(test = i.test_type).exists():
             invoiceitems.append(TestPriceSlab.objects.get(test = i.test_type))
+            continue
         else:
             slab = TestPriceSlab.objects.create(user = request.user, test = i.test_type, price = 0)
             slab.save()
             invoiceitems.append(slab)
-
+            continue
+    
     for j in invoiceitems:
+        print(j,"oopweuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",invoiceitems)
         invoice_items = InvoiceItems.objects.create(TestPrice = j, price = j.price, user = request.user, invoice = invoice)
         invoice_items.save()
         invoice.total_amount += j.price
