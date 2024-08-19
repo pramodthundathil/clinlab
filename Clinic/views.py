@@ -12,6 +12,14 @@ today = datetime.now()
 daybeforeyesterday = today - timedelta(2)
 
 
+from django import template
+from itertools import groupby
+
+register = template.Library()
+
+@register.filter
+def groupby(value, arg):
+    return groupby(value, key=lambda x: getattr(x, arg))
 
 '''
 views is for handling tests and comprehesive tests
@@ -151,6 +159,9 @@ def OrderSingle(request,pk):
     tests = TestType.objects.all()
     c_tests = ComprehensiveTest.objects.all()
     results  = TestResult.objects.filter(order = new_order)
+    normal_test = TestResult.objects.filter(order = new_order, is_comprehensive = False)
+    com_test = TestResult.objects.filter(order = new_order, is_comprehensive = True )
+
     context = {
         "new_order":new_order,
         "patient":patient,
@@ -213,7 +224,8 @@ def Customer_adding_from_single_order(request,pk):
         pnum = request.POST.get('pnum')
         email = request.POST.get('email')
         Address = request.POST.get('Address')
-        patient = Patient.objects.create(first_name = first_name, last_name = last_name,age = age,address = Address, phone_number = pnum, email = email, user = request.user )
+        slno = request.POST.get('slno')
+        patient = Patient.objects.create(first_name = first_name, last_name = last_name,age = age,address = Address, phone_number = pnum, email = email, user = request.user,gender = slno)
         patient.save()
         order.patient = patient
         order.patient_name = patient.first_name + patient.last_name
@@ -359,7 +371,7 @@ def conprehensive_addtest_ajax(request,pk):
         if test:
             try:
                 for i in test.tests.all():
-                    result = TestResult.objects.create(order = order, test_type = i, technician = request.user, comments = "" )
+                    result = TestResult.objects.create(order = order, test_type = i, technician = request.user, comments = "",comprehensive_test = test,is_comprehensive = True )
                     result.save()
                 result = TestResult.objects.filter(order = order)
                 testdeatil_table = render_to_string('ajaxtemplates/testdeatil_table.html', {'results': result})
@@ -432,7 +444,39 @@ def delete_test_result(request,pk):
     messages.info(request,"Test Deleted...")
     return redirect("OrderSingle",pk = order)
 
-def lab_report(request,pk):
+def lab_report(request, pk):
+    order = Order.objects.get(id=pk)
+    results = TestResult.objects.filter(order=order)
+
+    lab = {}
+    try:
+        lab = LabDetails.objects.get(user=request.user)
+    except LabDetails.DoesNotExist:
+        messages.warning(request, "Please fill out the address of the lab...")
+        return redirect("profile")
+
+    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
+    grouped_results = {"nocom":[]}
+    for result in results:
+        if result.comprehensive_test:
+            if result.comprehensive_test not in grouped_results:
+                grouped_results[result.comprehensive_test] = []
+            grouped_results[result.comprehensive_test].append(result)
+        else:
+            if "nocom" not in grouped_results:
+                grouped_results["nocom"] = []
+            grouped_results["nocom"].append(result)
+
+    print(grouped_results,"------------------")
+    context = {
+        "grouped_results": grouped_results,
+        "order": order,
+        "lab": lab,
+    }
+    return render(request, 'laboratory/labreport.html', context)
+
+    
+def lab_report_download(request,pk):
     order = Order.objects.get(id = pk) 
     result = TestResult.objects.filter(order = order)
     lab = {}
@@ -448,7 +492,7 @@ def lab_report(request,pk):
         "order":order,
         "lab":lab
     }
-    return render(request,'laboratory/labreport.html',context)
+    return render(request,'laboratory/labreport_pdf.html',context)
 
 from django.http import HttpResponse
 from xhtml2pdf import pisa

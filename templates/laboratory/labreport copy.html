@@ -122,15 +122,15 @@
 </head>
 
 <body onload="printInvoice()">
-    <div class="head" style="position: fixed;top:0;">
-    <img src="/static/src/images/medi_lab.png" width="100%" alt="">
-</div>
-
     <div class="container" id="invoice-content">
         <div class="header" style="text-transform: uppercase;">
+            <h1></h1>
+            <p></p>
+            <p></p>
+            <p></p>
         </div>
 
-        <div class="patient-info">
+        <div class="patient-info" style="margin-top: 100px;">
             <div class="info-block">
                 <h3>Name: {{order.patient_name}}</h3>
                 <p>Age: {{order.patient.age}}</p>
@@ -205,9 +205,6 @@
             </div>
         </div>
 
-    </div>
-    <div class="head" style="position: fixed;bottom: 0;">
-        <img src="/static/src/images/medilab_footer.png" width="100%" alt="">
     </div>
 
     <script>

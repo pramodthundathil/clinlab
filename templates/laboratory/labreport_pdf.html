@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            max-width: 150px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .patient-info,
+        .sample-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .info-block {
+            width: 48%;
+        }
+
+        .info-block h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .info-block p {
+            margin: 0;
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: rgb(233, 52, 52);
+            -webkit-print-color-adjust: exact;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: small;
+        }
+
+        .report-table thead th {
+            /* border: 1px solid #2a8fed; */
+            color: rgb(5, 111, 147);
+            padding: 5px;
+            text-align: left;
+            -webkit-print-color-adjust: exact;
+            font-weight: 800;
+        }
+
+        .report-table thead th {
+            /* background-color: #2a8fed; */
+            -webkit-print-color-adjust: exact;
+        }
+
+        th,
+        td {
+            padding: 10px !important;
+            /* border-bottom: .2px solid #4f505273; */
+            -webkit-print-color-adjust: exact;
+        }
+
+        .signature-block {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .signature-block div {
+            text-align: center;
+            width: 30%;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        table {
+            /* border: .2px solid #4f505273; */
+            margin-right: 20px !important;
+
+            /* display: block; */
+            /* margin: auto; */
+        }
+
+        h4 {
+            text-align: center;
+            color: rgb(136, 136, 242);
+            -webkit-print-color-adjust: exact;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="contentToDownload">
+        <div class="header" style="text-transform: uppercase;">
+            <!-- <img src="{{lab.logo_of_lab.url}}" alt="Smart Pathology Lab"> -->
+            <h1></h1>
+            <p></p>
+            <p></p>
+            <p></p>
+        </div>
+
+        <div class="patient-info" style="margin-top: 100px;">
+            <div class="info-block">
+                <h3>Name: {{order.patient_name}}</h3>
+                <p>Age: {{order.patient.age}}</p>
+                <p>Number: {{order.patient.gender}}</p>
+            </div>
+            <div class="info-block">
+                <p>Ref. By: Dr. {{order.doctor}}</p>
+                <p>Registered on: {{order.created_date}}</p>
+                <p>PID: {{order.order_number}}</p>
+            </div>
+        </div>
+        <h4>LAB REPORT</h4>
+        <div class="report-title" style="margin-top: 20px !important;">
+            BLOOD-HAEMOGRAM
+        </div>
+
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Investigation</th>
+                    <th>Result</th>
+                    <th>Unit</th>
+                    <th>Reference Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in result %}
+                <tr>
+                    <td style="text-align: left !important;">{{item.test_type}}</td>
+                    <td><b> {{item.result_value}} {{item.comments}} </b></td>
+                    <td>{{item.test_type.unit}}</td>
+                    <td>{{item.test_type.normal_range}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="signature-block" style="bottom: 0;position: relative;">
+            <div>
+                <p></p>
+                <p></p>
+            </div>
+            <div>
+                <p></p>
+                <p></p>
+            </div>
+            <div>
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+    </div>
+
+    <button id="downloadPdfBtn">Download as PDF</button>
+
+    <!-- Include jsPDF and html2canvas from a CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- <script>
+        document.getElementById('downloadPdfBtn').addEventListener('click', async function () {
+            // Load jsPDF and html2canvas modules
+            const { jsPDF } = window.jspdf;
+
+            // Target the element to be converted to PDF
+            const contentElement = document.getElementById('contentToDownload');
+
+            // Use html2canvas to take a snapshot of the content
+            const canvas = await html2canvas(contentElement);
+
+            // Convert the canvas to an image data URL
+            const imgData = canvas.toDataURL('image/png');
+
+            // Initialize jsPDF
+            const pdf = new jsPDF();
+
+            // Calculate the image dimensions to fit within the PDF
+            const imgWidth = 210; // A4 page width in mm
+            const pageHeight = 295; // A4 page height in mm
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+
+            // Add the image to the PDF
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+            // Add more pages if the content is larger than one page
+            heightLeft -= pageHeight;
+            while (heightLeft >= 0) {
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, heightLeft - imgHeight, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            // Save the PDF with a given filename
+            pdf.save('downloaded_content.pdf');
+        });
+    </script> -->
+
+    <script>
+         async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+
+            const contentElement = document.getElementById('contentToDownload');
+            const canvas = await html2canvas(contentElement);
+            const imgData = canvas.toDataURL('image/png');
+
+            const pdf = new jsPDF();
+            const imgWidth = 210;
+            const pageHeight = 295;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+            heightLeft -= pageHeight;
+            while (heightLeft >= 0) {
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, heightLeft - imgHeight, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('Lab_Report_{{order.patient_name}}.pdf');
+            window.close()
+        }
+        window.onload = function () {
+            
+            downloadPDF();
+            
+        };
+    </script>
+</body>
+
+</html>

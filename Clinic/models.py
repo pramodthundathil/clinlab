@@ -56,6 +56,8 @@ class Order(models.Model):
 
 class TestResult(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    is_comprehensive = models.BooleanField(default=False)
+    comprehensive_test = models.ForeignKey(ComprehensiveTest, on_delete=models.SET_NULL, null=True, blank=True)
     test_type = models.ForeignKey(TestType, on_delete=models.CASCADE)
     test_date = models.DateTimeField(auto_now_add=True)
     result_value = models.CharField(max_length=30, null=True, blank=True)

@@ -161,15 +161,18 @@
     </div>
     <div class="pd-20 mb-20 card-box">
         <div class="row text-center">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <a href="{%url 'ApproveReport' new_order.id %}" class="btn btn-success">Approve</a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <a href="{%url 'lab_report' new_order.id %}" target="_blank"  class="btn btn-warning">Print Result</a>
             </div>
-            <div class="col-md-4">
-                <a href="{%url 'generete_invoice' new_order.id %}" class="btn btn-info">Generete Invoice</a>
+            <div class="col-md-3">
+                <a href="{%url 'generete_invoice' new_order.id %}"  target="_blank" class="btn btn-info">Generete Invoice</a>
             </div>
+            <div class="col-md-3">
+              <a href="{%url 'lab_report_download' new_order.id %}" target="_blank" class="btn btn-info">Report_pdf</a>
+          </div>
         </div>
 
     </div>
@@ -237,12 +240,23 @@
             </div>
             <div class="col-md-6 col-sm-12">
               <div class="form-group">
-                <label>Age</label>
+                <label>Age and Sex</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
-                  placeholder="Age"
+                  placeholder="Age / Sex"
                   name="age"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div class="form-group">
+                <label>Sl No</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial Number"
+                  name="slno"
                 />
               </div>
             </div>
