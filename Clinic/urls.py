@@ -30,6 +30,7 @@ urlpatterns = [
     path("ApproveReport/<int:pk>",views.ApproveReport,name="ApproveReport"),
 
     path("lab_report/<int:pk>",views.lab_report,name="lab_report"),
+    path("lab_report_nohead/<int:pk>",views.lab_report_nohead,name="lab_report_nohead"),
     path("labreportdownload<int:pk>",views.labreportdownload,name="labreportdownload"),
     path("lab_report_download<int:pk>",views.lab_report_download,name="lab_report_download"),
     path("RecentlycompletedTests",views.RecentlycompletedTests,name="RecentlycompletedTests"),

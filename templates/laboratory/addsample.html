@@ -21,6 +21,7 @@
               </ol>
             </nav>
           </div>
+          
           <div class="col-md-6 col-sm-12 text-right">
             <h4>
               Sample Number:
@@ -38,6 +39,28 @@
           </div>
         </div>
       </div>
+      <div class="pd-20 mb-20 card-box">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <a href="{%url 'ApproveReport' new_order.id %}" class="btn btn-success"> <i class="icon-copy dw dw-tick"></i>Approve</a>
+            </div>
+            <div class="col-md-3">
+                <!-- <a href="{%url 'lab_report' new_order.id %}" target="_blank"  class="btn btn-warning">Print Result</a> -->
+                <button type="button" class="btn btn-warning dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false"><i class="icon-copy dw dw-print"></i> Print Result <span class="caret"></span> </button>
+										<div class="dropdown-menu bg-light-info">
+											<a class="dropdown-item " href="{%url 'lab_report' new_order.id %}" target="_blank">Print with Letter Head</a>
+											<a class="dropdown-item" href="{%url 'lab_report_nohead' new_order.id %}" target="_blank">Print without Letter Head</a>
+										</div>
+            </div>
+            <div class="col-md-3">
+                <a href="{%url 'generete_invoice' new_order.id %}"  target="_blank" class="btn btn-info"><i class="icon-copy dw dw-invoice"></i> Generete Invoice</a>
+            </div>
+            <div class="col-md-3">
+              <a href="{%url 'lab_report_download' new_order.id %}" target="_blank" class="btn btn-dark"><i class="icon-copy dw dw-file4"></i> Download PDF</a>
+          </div>
+        </div>
+
+    </div>
 
       <div class="card-box mb-30">
         <div class="pd-20">
@@ -162,16 +185,21 @@
     <div class="pd-20 mb-20 card-box">
         <div class="row text-center">
             <div class="col-md-3">
-                <a href="{%url 'ApproveReport' new_order.id %}" class="btn btn-success">Approve</a>
+                <a href="{%url 'ApproveReport' new_order.id %}" class="btn btn-success"> <i class="icon-copy dw dw-tick"></i>Approve</a>
             </div>
             <div class="col-md-3">
-                <a href="{%url 'lab_report' new_order.id %}" target="_blank"  class="btn btn-warning">Print Result</a>
+                <!-- <a href="{%url 'lab_report' new_order.id %}" target="_blank"  class="btn btn-warning">Print Result</a> -->
+                <button type="button" class="btn btn-warning dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false"><i class="icon-copy dw dw-print"></i> Print Result <span class="caret"></span> </button>
+										<div class="dropdown-menu bg-light-info">
+											<a class="dropdown-item " href="{%url 'lab_report' new_order.id %}" target="_blank">Print with Letter Head</a>
+											<a class="dropdown-item" href="{%url 'lab_report_nohead' new_order.id %}" target="_blank">Print without Letter Head</a>
+										</div>
             </div>
             <div class="col-md-3">
-                <a href="{%url 'generete_invoice' new_order.id %}"  target="_blank" class="btn btn-info">Generete Invoice</a>
+                <a href="{%url 'generete_invoice' new_order.id %}"  target="_blank" class="btn btn-info"><i class="icon-copy dw dw-invoice"></i> Generete Invoice</a>
             </div>
             <div class="col-md-3">
-              <a href="{%url 'lab_report_download' new_order.id %}" target="_blank" class="btn btn-info">Report_pdf</a>
+              <a href="{%url 'lab_report_download' new_order.id %}" target="_blank" class="btn btn-dark"><i class="icon-copy dw dw-file4"></i> Download PDF</a>
           </div>
         </div>
 

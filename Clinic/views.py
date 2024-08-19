@@ -475,23 +475,68 @@ def lab_report(request, pk):
     }
     return render(request, 'laboratory/labreport.html', context)
 
-    
-def lab_report_download(request,pk):
-    order = Order.objects.get(id = pk) 
-    result = TestResult.objects.filter(order = order)
+def lab_report_nohead(request,pk):
+    order = Order.objects.get(id=pk)
+    results = TestResult.objects.filter(order=order)
+
     lab = {}
     try:
-        lab = LabDetails.objects.get(user = request.user)
-    except:
-        messages.warning(request,"Please Fill out the address of the lab...")
+        lab = LabDetails.objects.get(user=request.user)
+    except LabDetails.DoesNotExist:
+        messages.warning(request, "Please fill out the address of the lab...")
         return redirect("profile")
 
+    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
+    grouped_results = {"nocom":[]}
+    for result in results:
+        if result.comprehensive_test:
+            if result.comprehensive_test not in grouped_results:
+                grouped_results[result.comprehensive_test] = []
+            grouped_results[result.comprehensive_test].append(result)
+        else:
+            if "nocom" not in grouped_results:
+                grouped_results["nocom"] = []
+            grouped_results["nocom"].append(result)
 
+    print(grouped_results,"------------------")
     context = {
-        "result":result,
-        "order":order,
-        "lab":lab
+        "grouped_results": grouped_results,
+        "order": order,
+        "lab": lab,
     }
+    return render(request,"laboratory/labreport_nohead.html",context)
+
+    
+def lab_report_download(request,pk):
+    order = Order.objects.get(id=pk)
+    results = TestResult.objects.filter(order=order)
+
+    lab = {}
+    try:
+        lab = LabDetails.objects.get(user=request.user)
+    except LabDetails.DoesNotExist:
+        messages.warning(request, "Please fill out the address of the lab...")
+        return redirect("profile")
+
+    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
+    grouped_results = {"nocom":[]}
+    for result in results:
+        if result.comprehensive_test:
+            if result.comprehensive_test not in grouped_results:
+                grouped_results[result.comprehensive_test] = []
+            grouped_results[result.comprehensive_test].append(result)
+        else:
+            if "nocom" not in grouped_results:
+                grouped_results["nocom"] = []
+            grouped_results["nocom"].append(result)
+
+    print(grouped_results,"------------------")
+    context = {
+        "grouped_results": grouped_results,
+        "order": order,
+        "lab": lab,
+    }
+    
     return render(request,'laboratory/labreport_pdf.html',context)
 
 from django.http import HttpResponse

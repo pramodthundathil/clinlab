@@ -20,7 +20,7 @@
 						</div>
 						<div class="col-md-6 col-sm-12 text-right">
 							<div class="dropdown">
-								<a class="btn btn-primary" href="#" role="button" data-toggle="dropdown">
+								<a class="btn btn-primary" onclick="printInvoice()" role="button" data-toggle="dropdown">
 									Print Invoice
 								</a>
                                 <a href="" class="btn btn-warning">Make Ajustment And Accept</a>
@@ -29,7 +29,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="invoice-wrap">
+				<div class="invoice-wrap invoice-content">
 					<div class="invoice-box">
 						<div class="invoice-header">
 							<div class="logo text-center">
@@ -112,4 +112,13 @@
             </div>
 		</div>
 	</div>
+	<script>
+		function printInvoice() {
+            var printContents = document.getElementById('invoice-content').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+	</script>
 {% endblock %}
