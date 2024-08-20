@@ -12,6 +12,7 @@ from datetime import timedelta,  datetime
 today = datetime.now() + timedelta(1)
 daybeforeyesterday = today - timedelta(2)
 
+@login_required(login_url='SignIn')
 def Index(request):
     pending_samples_count = Order.objects.filter(order_status = False, user = request.user).count()
     completed_samples = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today, user = request.user)
@@ -24,6 +25,7 @@ def Index(request):
     return render(request,"index.html",context)
 
 
+@login_required(login_url='SignIn')
 def calender(request):
     return render(request,'calender.html')
 
@@ -90,6 +92,7 @@ def AddUser(request):
 Settings for units of tests and its functionalities this functions hadeled in settings tab on Dashboard
 '''
 
+@login_required(login_url='SignIn')
 def Unit(request):
     myunits = Units.objects.all().order_by("unit")
     if request.method == "POST":
@@ -112,6 +115,7 @@ def Unit(request):
 
 
 
+@login_required(login_url='SignIn')
 def profile(request):
 
     if LabDetails.objects.filter(user = request.user).exists():
@@ -153,6 +157,7 @@ def profile(request):
 
 
 
+@login_required(login_url='SignIn')
 def ChangeProfilePic(request,pk):
     if request.method == "POST":
         lab = LabDetails.objects.get(id  = pk)
@@ -165,6 +170,7 @@ def ChangeProfilePic(request,pk):
         return redirect("profile")
     
 
+@login_required(login_url='SignIn')
 def customers(request):
     patients = Patient.objects.filter(user = request.user).order_by('id')
 
@@ -173,6 +179,7 @@ def customers(request):
     }
     return render(request,'laboratory/cutomers.html',context)
 
+@login_required(login_url='SignIn')
 def customer_single(request,pk):
     patient = Patient.objects.get(id = pk)
     order = Order.objects.filter(patient = patient)
@@ -184,6 +191,7 @@ def customer_single(request,pk):
 
     return render(request,"laboratory/patientsingle.html",context)
 
+@login_required(login_url='SignIn')
 def UploadLeatterHead(request):
     if request.method =="POST":
         letter_top = request.FILES.get("letter_top")

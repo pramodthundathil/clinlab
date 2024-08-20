@@ -7,10 +7,12 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 
 
+@login_required(login_url='SignIn')
 def Invoices(request):
     invoices = Invoce.objects.filter(user=request.user).order_by("-date_time")
 
@@ -19,6 +21,7 @@ def Invoices(request):
     }
     return render(request,"finance/invoices.html",context)
 
+@login_required(login_url='SignIn')
 def Incomes(request):
     income = Income.objects.filter(user = request.user)
     if request.method == "POST":
@@ -34,12 +37,14 @@ def Incomes(request):
     }
     return render(request,"finance/income.html",context)
 
+@login_required(login_url='SignIn')
 def delete_income(request,pk):
     Income.objects.get(id = pk).delete()
     messages.success(request,"Income deleted..")
 
     return redirect("Incomes")
 
+@login_required(login_url='SignIn')
 def Expenses(request):
     expence = Expence.objects.filter(user = request.user)
     if request.method == "POST":
@@ -55,6 +60,7 @@ def Expenses(request):
     }
     return render(request,"finance/expenses.html",context)
 
+@login_required(login_url='SignIn')
 def delete_expence(request,pk):
     Expence.objects.get(id = pk).delete()
     messages.success(request,"Expence deleted..")
@@ -62,6 +68,7 @@ def delete_expence(request,pk):
     return redirect("Expenses")
 
 
+@login_required(login_url='SignIn')
 def Finance_settings(request):
     tests = TestType.objects.all()
     price = TestPriceSlab.objects.filter(user = request.user)
@@ -100,6 +107,7 @@ def add_price_slab(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 
+@login_required(login_url='SignIn')
 def get_invoice(request,pk):
     invoice = Invoce.objects.get(id = pk)
     invoice_items = InvoiceItems.objects.filter(invoice = invoice)
@@ -113,6 +121,7 @@ def get_invoice(request,pk):
     return render(request,"finance/invoice_sample.html",context)
 
 
+@login_required(login_url='SignIn')
 def generete_invoice(request,pk):
     order =  Order.objects.get(id = pk)
     items = TestResult.objects.filter(order = order)
@@ -175,6 +184,7 @@ def addprice_ajax(request):
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
+@login_required(login_url='SignIn')
 def adjustment(request,pk):
     invoice = Invoce.objects.get(id = pk)
     if request.method == "POST":
@@ -195,6 +205,7 @@ def adjustment(request,pk):
     return redirect("get_invoice",pk = pk)
 
 
+@login_required(login_url='SignIn')
 def delete_invoice(request,pk):
     invoice = Invoce.objects.get(id = pk)
     invoice.delete()

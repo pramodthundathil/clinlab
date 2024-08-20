@@ -10,6 +10,7 @@ from datetime import timedelta,  datetime
 from django.core.mail import send_mail,EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.decorators import login_required
 
 today = datetime.now()
 daybeforeyesterday = today - timedelta(2)
@@ -38,7 +39,7 @@ this view include
 # model TestType
 
 #1.Single test view function
-
+@login_required(login_url='SignIn')
 def SingleTests(request):
     clinicaltest = TestType.objects.all().order_by('-name')
     units = Units.objects.all()
@@ -49,7 +50,7 @@ def SingleTests(request):
     return render(request,"pathology/singletests.html",context)
 
 #2. For Saving the test data with ajax
-
+@login_required(login_url='SignIn')
 def delete_test(request,pk):
     if request.user.is_superuser == True:
         TestType.objects.get(id = pk).delete()
@@ -88,6 +89,7 @@ def add_test_type(request):
 
 
 # comprehensive tests 
+@login_required(login_url='SignIn')
 def comprehensive_test(request):
     tests = ComprehensiveTest.objects.filter(add_by = request.user) 
     context = {
@@ -96,6 +98,7 @@ def comprehensive_test(request):
     return render(request,'pathology/comprehensive_tests.html',context)
 
 
+@login_required(login_url='SignIn')
 def AddComprehensivetest(request):
     if request.method == "POST":
         name = request.POST.get('name')
@@ -112,6 +115,7 @@ def AddComprehensivetest(request):
         return redirect("comprehensive_test")
         
 
+@login_required(login_url='SignIn')
 def delete_comprehensive_test(request,pk):
     if request.user.is_superuser == True:
 
@@ -125,6 +129,7 @@ def delete_comprehensive_test(request,pk):
 
     return redirect("comprehensive_test")
 
+@login_required(login_url='SignIn')
 def Comprehensive_single(request,pk):
     test = ComprehensiveTest.objects.get(id = pk)
     tests = TestType.objects.all()
@@ -158,6 +163,7 @@ def addconprehensivetest_ajax(request,pk):
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
+@login_required(login_url='SignIn')
 def testdeletefromcomtest(request,pk,tk):
     ctest = ComprehensiveTest.objects.get(id = pk)
     test = TestType.objects.get(id = tk)
@@ -168,12 +174,14 @@ def testdeletefromcomtest(request,pk,tk):
 
 # 3. Order Creation Sample Collection
 
+@login_required(login_url='SignIn')
 def CreateSample(request):
     new_order = Order.objects.create(user = request.user )
     new_order.save()
     return redirect(OrderSingle,pk = new_order.id)
 
 
+@login_required(login_url='SignIn')
 def OrderSingle(request,pk):
     new_order = Order.objects.get(id = pk)
     patient = Patient.objects.filter(user = request.user)
@@ -193,6 +201,7 @@ def OrderSingle(request,pk):
     
     return render(request,"laboratory/addsample.html",context) 
 
+@login_required(login_url='SignIn')
 def OrderSingleFinished(request,pk):
     new_order = Order.objects.get(id = pk)
     patient = Patient.objects.filter(user = request.user)
@@ -235,6 +244,7 @@ def customer_autocomplete(request):
 
 ## customer adding to patient table and also the same patinet is to the order 
 
+@login_required(login_url='SignIn')
 def Customer_adding_from_single_order(request,pk):
     order = Order.objects.get(id = pk)
     if request.method == "POST":
@@ -260,6 +270,7 @@ def Customer_adding_from_single_order(request,pk):
     else:
         return redirect("OrderSingle",pk = pk)
     
+@login_required(login_url='SignIn')
 def delete_customer(request,pk):
     if Patient.objects.filter(user = request.user,id = pk).exists():
         Patient.objects.get(id = pk).delete()
@@ -365,6 +376,7 @@ def update_order_collected_time(request, pk):
 #pendingsample returns from pending samples we can view individal order
 # NOTE: sample is sorted by order and filtered by creation user
 
+@login_required(login_url='SignIn')
 def pending_samples(request):
     order =  Order.objects.filter(user = request.user,order_status = False)
 
@@ -484,6 +496,7 @@ def addcomment_ajax(request):
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
+@login_required(login_url='SignIn')
 def delete_test_result(request,pk):
     test = TestResult.objects.get(id = pk)
     order = test.order.id
@@ -491,6 +504,7 @@ def delete_test_result(request,pk):
     messages.info(request,"Test Deleted...")
     return redirect("OrderSingle",pk = order)
 
+@login_required(login_url='SignIn')
 def lab_report(request, pk):
     order = Order.objects.get(id=pk)
     results = TestResult.objects.filter(order=order)
@@ -522,6 +536,7 @@ def lab_report(request, pk):
     }
     return render(request, 'laboratory/labreport.html', context)
 
+@login_required(login_url='SignIn')
 def lab_report_nohead(request,pk):
     order = Order.objects.get(id=pk)
     results = TestResult.objects.filter(order=order)
@@ -631,6 +646,7 @@ def labreportdownload(request,pk):
     
 from datetime import datetime
 
+@login_required(login_url='SignIn')
 def ApproveReport(request,pk):
     order = Order.objects.get(id = pk)
     order.approvel_status = True
@@ -640,6 +656,7 @@ def ApproveReport(request,pk):
     return redirect("OrderSingleFinished",pk = pk )
 
 
+@login_required(login_url='SignIn')
 def RecentlycompletedTests(request):
     order = Order.objects.filter(approval_date__gte = daybeforeyesterday, approval_date__lte = today, user = request.user)
     context = {
