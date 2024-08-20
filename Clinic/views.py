@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 
-today = datetime.now()
+today = datetime.now() + timedelta(1)
 daybeforeyesterday = today - timedelta(2)
 
 
