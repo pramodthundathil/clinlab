@@ -141,6 +141,8 @@ def Comprehensive_single(request,pk):
     }
     return render(request,'pathology/comprehensive_test_add_single.html',context)
 
+
+
 @csrf_exempt
 def addconprehensivetest_ajax(request,pk):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -153,8 +155,8 @@ def addconprehensivetest_ajax(request,pk):
                 com_test.tests.add(test)
                 com_test.save()
                 
-                testdeatil_table = render_to_string('ajaxtemplates/comprehensivetable.html', {'results': com_test})
-                return JsonResponse({'success': True,"error": "testdeatil_table"})
+                testdeatil_table = render_to_string('ajaxtemplates/comprehensivetable.html', {'test': com_test})
+                return JsonResponse({'success': True,"error": "testdeatil_table","html": testdeatil_table})
             except Patient.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Patient does not exist'})
         else:
@@ -165,6 +167,7 @@ def addconprehensivetest_ajax(request,pk):
 
 @login_required(login_url='SignIn')
 def testdeletefromcomtest(request,pk,tk):
+    print(pk, tk, "----------------------------")
     ctest = ComprehensiveTest.objects.get(id = pk)
     test = TestType.objects.get(id = tk)
     ctest.tests.remove(test)
@@ -179,6 +182,11 @@ def CreateSample(request):
     new_order = Order.objects.create(user = request.user )
     new_order.save()
     return redirect(OrderSingle,pk = new_order.id)
+
+def Order_delete(request,pk):
+    Order.objects.get(id = pk).delete()
+    messages.info(request,"Item deleted.....")
+    return redirect("pending_samples")
 
 
 @login_required(login_url='SignIn')

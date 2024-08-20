@@ -9,7 +9,7 @@ urlpatterns = [
     path("Comprehensive_single/<int:pk>",views.Comprehensive_single,name="Comprehensive_single"),
     path("delete_comprehensive_test/<int:pk>",views.delete_comprehensive_test,name="delete_comprehensive_test"),
     path("addconprehensivetest_ajax/<int:pk>",views.addconprehensivetest_ajax,name="addconprehensivetest_ajax"),
-    path("testdeletefromcomtest/<int:pk><int:tk>",views.testdeletefromcomtest,name="testdeletefromcomtest"),
+    path("testdeletefromcomtest/<int:pk>/<int:tk>",views.testdeletefromcomtest,name="testdeletefromcomtest"),
     path("delete_test/<int:pk>",views.delete_test,name="delete_test"),
     path("delete_customer/<int:pk>",views.delete_customer,name="delete_customer"),
     
@@ -31,6 +31,7 @@ urlpatterns = [
     path('delete_test_result/<int:pk>/', views.delete_test_result, name='delete_test_result'),
     path("addcomment_ajax/",views.addcomment_ajax,name="addcomment_ajax"),
     path("ApproveReport/<int:pk>",views.ApproveReport,name="ApproveReport"),
+    path("Order_delete/<int:pk>",views.Order_delete,name="Order_delete"),
 
     path("lab_report/<int:pk>",views.lab_report,name="lab_report"),
     path("lab_report_nohead/<int:pk>",views.lab_report_nohead,name="lab_report_nohead"),

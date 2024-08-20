@@ -184,7 +184,10 @@
                 <td style="text-align: left !important;">{{ item.test_type }}</td>
                 <td>{{ item.result_value }} {{ item.comments }}</td>
                 <td>{{ item.test_type.unit }}</td>
-                <td>{{ item.test_type.normal_range }}</td>
+                <td>{{ item.test_type.normal_range }}
+                    {{ item.test_type.Interpertaion_description }}
+
+                </td>
             </tr>
             {% endfor %}
             {% endfor %}
