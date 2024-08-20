@@ -46,6 +46,20 @@ class InvoiceItems(models.Model):
     def __str__(self):
 
         return str(self.TestPrice + self.invoice )
+    
+
+class Income(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    income_name = models.CharField(max_length=20)
+    amount = models.FloatField()
+    date = models.DateField(auto_now_add=True)
+
+class Expence(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    expence_name = models.CharField(max_length=20)
+    amount = models.FloatField()
+    date = models.DateField(auto_now_add=True)
+    
 
 
 

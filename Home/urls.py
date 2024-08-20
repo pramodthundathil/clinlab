@@ -13,5 +13,6 @@ urlpatterns = [
     path("ChangeProfilePic/<int:pk>",views.ChangeProfilePic,name="ChangeProfilePic"),
     path("customers",views.customers,name="customers"),
     path("customer_single/<int:pk>",views.customer_single,name="customer_single"),
+    path("UploadLeatterHead",views.UploadLeatterHead,name="UploadLeatterHead")
    
 ]

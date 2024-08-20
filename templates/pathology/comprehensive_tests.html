@@ -21,6 +21,14 @@
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
                         <div class="dropdown">
+                            {% for message in messages%}
+                            <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                                <strong></strong> {{message}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endfor %}
                             <button class="btn btn-lg btn-primary" data-toggle="modal"
                                 data-target="#bd-example-modal-lg">
                                 <i class="icon-copy dw dw-add"></i> Add Test

@@ -6,19 +6,60 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+from django.contrib import messages
 
 
 
 
 def Invoices(request):
-    return render(request,"finance/invoices.html")
+    invoices = Invoce.objects.filter(user=request.user).order_by("-date_time")
+
+    context = {
+        "invoices":invoices
+    }
+    return render(request,"finance/invoices.html",context)
 
 def Incomes(request):
-    return render(request,"finance/income.html")
+    income = Income.objects.filter(user = request.user)
+    if request.method == "POST":
+        income_name = request.POST.get("income_name")
+        income_amount = request.POST.get("amount")
+        val = Income.objects.create(user = request.user,income_name = income_name,amount = income_amount)
+        val.save()
+        messages.success(request,"Income saved..")
+        return redirect("Incomes")
 
+    context = {
+        "income":income
+    }
+    return render(request,"finance/income.html",context)
+
+def delete_income(request,pk):
+    Income.objects.get(id = pk).delete()
+    messages.success(request,"Income deleted..")
+
+    return redirect("Incomes")
 
 def Expenses(request):
-    return render(request,"finance/expenses.html")
+    expence = Expence.objects.filter(user = request.user)
+    if request.method == "POST":
+        income_name = request.POST.get("income_name")
+        income_amount = request.POST.get("amount")
+        val = Expence.objects.create(user = request.user,expence_name = income_name,amount = income_amount)
+        val.save()
+        messages.success(request,"Expence saved..")
+        return redirect("Incomes")
+
+    context = {
+        "expence":expence
+    }
+    return render(request,"finance/expenses.html",context)
+
+def delete_expence(request,pk):
+    Expence.objects.get(id = pk).delete()
+    messages.success(request,"Expence deleted..")
+
+    return redirect("Expenses")
 
 
 def Finance_settings(request):
@@ -51,7 +92,7 @@ def add_price_slab(request):
                 
                 )
                 price_slab.save()
-                table = render_to_string('ajaxtemplates/comprehensivetable.html', {'price': price})
+                table = render_to_string('ajaxtemplates/priceslabtable.html', {'price': price})
                 return JsonResponse({'status': 'success', 'html':table})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
@@ -62,10 +103,12 @@ def add_price_slab(request):
 def get_invoice(request,pk):
     invoice = Invoce.objects.get(id = pk)
     invoice_items = InvoiceItems.objects.filter(invoice = invoice)
+    lab = LabDetails.objects.get(user = request.user)
 
     context = {
         "invoice":invoice,
-        "invoice_items":invoice_items
+        "invoice_items":invoice_items,
+        "lab":lab
     }
     return render(request,"finance/invoice_sample.html",context)
 
@@ -106,3 +149,54 @@ def generete_invoice(request,pk):
 
     return redirect("get_invoice", pk = invoice.id )
 
+@csrf_exempt
+def addprice_ajax(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        
+        test_result_id = request.POST.get('resultid')
+        print(test_result_id,"-----------------------------")
+        test = TestPriceSlab.objects.get(id = int(test_result_id))
+        result_value = request.POST.get('result')
+        price = TestPriceSlab.objects.filter(user = request.user)
+        
+        if test:
+            try:
+                test.price = result_value
+                test.save()
+                
+                testdeatil_table = render_to_string('ajaxtemplates/priceslabtable.html', {'price': price})
+                return JsonResponse({'success': True,'html':testdeatil_table})
+                
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+def adjustment(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    if request.method == "POST":
+        ajustments = request.POST.get('other_amount')
+        discount = request.POST.get('discount')
+        
+        if ajustments:
+            invoice.adjustment = float(ajustments)
+        if discount:
+            invoice.discount = float(discount)
+        invoice.save()
+        # invoiceitems = InvoiceItems.objects.filter(invoice = invoice )
+            
+        invoice.total_payable = invoice.total_amount - invoice.discount + invoice.adjustment
+        invoice.save()
+
+        print(ajustments, discount,"--------------------=======================")
+    return redirect("get_invoice",pk = pk)
+
+
+def delete_invoice(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    invoice.delete()
+    messages.info(request,"Invoice deleted")
+    return redirect('Invoices')

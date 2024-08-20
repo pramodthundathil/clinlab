@@ -15,7 +15,7 @@
             <td>{{forloop.counter}}. </td>
             <td class="table-plus">{{item.test}}</td>
             <td>{{item.test.unit}}</td>
-            <td><input type="number" value="{{item.price}}" class="form-control" id="item_price" data-price-id="{{item.id}}"></td>
+            <td><input type="number" value="{{item.price}}" class="form-control item_price" id="item_price" data-price-id="{{item.id}}"></td>
             <td>
                 {% if item.order_status == True %}
                 <span class="badge bg-success">Available</span>

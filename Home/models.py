@@ -31,6 +31,8 @@ class LabDetails(models.Model):
     location = models.CharField(max_length=255, null=True, blank=True)
     contact_number = models.CharField(max_length=100, null=True, blank=True)
     logo_of_lab = models.FileField(upload_to='lab_logo', null=True, blank=True)
+    letter_head = models.FileField(upload_to="letter_head_top", null=True, blank=True)
+    letter_head_down = models.FileField(upload_to="letter_head_down", null=True, blank=True)
 
 
 

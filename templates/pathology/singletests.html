@@ -20,7 +20,18 @@
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
+                        {% for message in messages%}
+                                    <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                                        <strong></strong> {{message}}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
                         <div class="dropdown">
+                            
+                                
+                                
                             <button class="btn btn-lg btn-primary" data-toggle="modal"
                                 data-target="#bd-example-modal-lg">
                                 <i class="icon-copy dw dw-add"></i> Add Test
@@ -162,7 +173,7 @@
                                     <a href="" class="btn btn-outline-info"><i class="icon-copy dw dw-edit-1"></i></a>
 
                                     <!-- delete model start  -->
-                                            <a href="#" onclick="confirm ('Are you sure ??')"  class="btn btn-outline-danger" data-toggle="modal" data-target="#confirmation-modal"><i class="icon-copy dw dw-delete-3" ></i></a>
+                                            <a href="{%url 'delete_test' item.id %}" onclick="return confirm ('Are you sure ??')"  class="btn btn-outline-danger"><i class="icon-copy dw dw-delete-3" ></i></a>
                                             
                                     <!-- delete model end  -->
 

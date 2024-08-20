@@ -7,6 +7,9 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from datetime import timedelta,  datetime
+from django.core.mail import send_mail,EmailMessage
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
 
 today = datetime.now()
 daybeforeyesterday = today - timedelta(2)
@@ -46,6 +49,17 @@ def SingleTests(request):
     return render(request,"pathology/singletests.html",context)
 
 #2. For Saving the test data with ajax
+
+def delete_test(request,pk):
+    if request.user.is_superuser == True:
+        TestType.objects.get(id = pk).delete()
+        messages.info(request,"Test Deleted..")
+    else:
+        messages.error(request,"You dont have permission to delete....")
+    
+    return redirect("SingleTests")
+
+
 
 
 @csrf_exempt
@@ -99,9 +113,16 @@ def AddComprehensivetest(request):
         
 
 def delete_comprehensive_test(request,pk):
-    test = ComprehensiveTest.objects.get(id = pk)
-    test.delete()
-    messages.info(request, "Test Deleted success....")
+    if request.user.is_superuser == True:
+
+        test = ComprehensiveTest.objects.get(id = pk)
+        test.delete()
+        messages.info(request, "Test Deleted success....")
+
+    else:
+        messages.error(request, "You dont have permission to delete....")
+
+
     return redirect("comprehensive_test")
 
 def Comprehensive_single(request,pk):
@@ -239,6 +260,13 @@ def Customer_adding_from_single_order(request,pk):
     else:
         return redirect("OrderSingle",pk = pk)
     
+def delete_customer(request,pk):
+    if Patient.objects.filter(user = request.user,id = pk).exists():
+        Patient.objects.get(id = pk).delete()
+        messages.success(request,"customer deleted..")
+        return redirect("customers")
+    return redirect("customers")
+    
 @csrf_exempt   
 def update_order_patient(request, pk):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -306,6 +334,25 @@ def update_order_hospital(request, pk):
         if hospital:
             try:
                 order.hospital = hospital
+                order.save()
+                return JsonResponse({'success': True})
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'}) 
+
+
+@csrf_exempt   
+def update_order_collected_time(request, pk):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        order = get_object_or_404(Order, id=pk)
+        time = request.POST.get('sample')
+        
+        if time:
+            try:
+                order.sample_collected_time = time
                 order.save()
                 return JsonResponse({'success': True})
             except Patient.DoesNotExist:
@@ -531,6 +578,7 @@ def lab_report_download(request,pk):
             grouped_results["nocom"].append(result)
 
     print(grouped_results,"------------------")
+    
     context = {
         "grouped_results": grouped_results,
         "order": order,
@@ -546,15 +594,27 @@ from io import BytesIO
 def labreportdownload(request,pk):
     # Render HTML content
     order = Order.objects.get(id = pk) 
-    result = TestResult.objects.filter(order = order)
+    results = TestResult.objects.filter(order = order)
+    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
+    grouped_results = {"nocom":[]}
+    for result in results:
+        if result.comprehensive_test:
+            if result.comprehensive_test not in grouped_results:
+                grouped_results[result.comprehensive_test] = []
+            grouped_results[result.comprehensive_test].append(result)
+        else:
+            if "nocom" not in grouped_results:
+                grouped_results["nocom"] = []
+            grouped_results["nocom"].append(result)
+
     lab = {}
     try:
-        lab = LabDetails.objects.get(user = request.user)
-    except:
-        messages.warning(request,"Please Fill out the address of the lab...")
+        lab = LabDetails.objects.get(user=request.user)
+    except LabDetails.DoesNotExist:
+        messages.warning(request, "Please fill out the address of the lab...")
         return redirect("profile")
     context = {
-        "result":result,
+        "grouped_results":grouped_results,
         "order":order,
         "lab":lab
     }
@@ -568,6 +628,7 @@ def labreportdownload(request,pk):
         return response
     else:
         return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
+    
 from datetime import datetime
 
 def ApproveReport(request,pk):
@@ -586,8 +647,114 @@ def RecentlycompletedTests(request):
     }
     return render(request,"laboratory/recentlycompletedtests.html",context)
 
-    
 
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from xhtml2pdf import pisa
+
+def report_email(request, pk):
+    if request.method == "POST":
+        new_order = Order.objects.get(id=pk)
+        email = request.POST.get("email")
+        
+        # Generate PDF
+        results = TestResult.objects.filter(order=new_order)
+        grouped_results = {"nocom":[]}
+        for result in results:
+            if result.comprehensive_test:
+                if result.comprehensive_test not in grouped_results:
+                    grouped_results[result.comprehensive_test] = []
+                grouped_results[result.comprehensive_test].append(result)
+            else:
+                if "nocom" not in grouped_results:
+                    grouped_results["nocom"] = []
+                grouped_results["nocom"].append(result)
+        lab = {}
+        try:
+            lab = LabDetails.objects.get(user=request.user)
+        except:
+            messages.warning(request, "Please fill out the address of the lab...")
+            return redirect("profile")
+
+        context = {
+            "grouped_results": grouped_results,
+            "order": new_order,
+            "lab": lab
+        }
+
+        # Render HTML to PDF
+        html_string = render_to_string('laboratory/labreport_pdf.html', context)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
+
+        if not pdf.err:
+            pdf_content = result.getvalue()
+            
+            try:
+                # Email details
+                mail_subject = 'Your MediLab Laboratory Report Is Ready'
+                current_site = get_current_site(request)
+                message = render_to_string('laboratory/emailbody.html', {
+                    "domain": current_site.domain,
+                    "new_order": new_order
+                })
+
+                # Create email with attachment
+                email_message = EmailMessage(mail_subject, message, to=[email])
+                email_message.attach(f"Lab_Report_{new_order.patient_name}.pdf", pdf_content, 'application/pdf')
+                email_message.send(fail_silently=True)
+            except Exception as e:
+                # Log error, if any
+                print(f"Failed to send email: {str(e)}")
+
+        return redirect("OrderSingleFinished", pk=pk)
+
+
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from django.http import HttpResponse
+
+def generate_pdf_with_reportlab(request, pk):
+    new_order = Order.objects.get(id=pk)
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    lab = LabDetails.objects.get(user = request.user)
+    result = TestResult.objects.filter(order = new_order)
+    # Draw the letterhead image at the top of the page
+    pdf.drawImage(str((lab.letter_head.url)[1:]), 0, 10 * inch, width=8 * inch, preserveAspectRatio=True, mask='auto')
+
+    # Add other report details manually, e.g.:
+    pdf.drawString(1 * inch, 9 * inch, f"Name: {new_order.patient_name}")
+    pdf.drawString(1 * inch, 8.75 * inch, f"PID: {new_order.order_number}")
+    pdf.drawString(1 * inch, 8.5 * inch, f"Reported on: {new_order.created_date}")
+
+    # Draw the table headers
+    pdf.drawString(1 * inch, 8 * inch, "Investigation")
+    pdf.drawString(3 * inch, 8 * inch, "Result")
+    pdf.drawString(5 * inch, 8 * inch, "Unit")
+    pdf.drawString(7 * inch, 8 * inch, "Reference Value")
+
+    # Example of iterating over test results
+    y = 7.75 * inch
+    for item in result:
+        pdf.drawString(1 * inch, y, f"{item.test_type}")
+        pdf.drawString(3 * inch, y, f"{item.result_value} {item.comments}")
+        pdf.drawString(5 * inch, y, f"{item.test_type.unit}")
+        pdf.drawString(7 * inch, y, f"{item.test_type.normal_range}")
+        y -= 0.25 * inch  # Move down the page for the next line
+
+    # Draw the footer image
+    pdf.drawImage(str((lab.letter_head_down.url)[1:]), 0, 0, width=8 * inch, preserveAspectRatio=True, mask='auto')
+
+    pdf.showPage()
+    pdf.save()
+
+    buffer.seek(0)
+    return HttpResponse(buffer, content_type='application/pdf')
 
 
 

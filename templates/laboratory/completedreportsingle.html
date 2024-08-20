@@ -55,7 +55,13 @@
                 <a href="{%url 'generete_invoice' new_order.id %}" target="_blank" class="btn btn-outline-warning mt-1" data-toggle="tooltip" title="Print Invoice"><i class="icon-copy dw dw-invoice-1"></i></a>
                 <a href="{%url 'OrderSingle' new_order.id %}" class="btn btn-outline-info mt-1" data-toggle="tooltip" title="Edit Result"><i class="icon-copy dw dw-edit-1"></i></a>
                 <a href="{%url 'customer_single' new_order.patient.id %}" class="btn btn-outline-primary mt-1" data-toggle="tooltip" title="View Patient Profile"><i class="icon-copy dw dw-view"></i> </a>
-                <a href="{%url 'labreportdownload' new_order.id %}" class="btn btn-outline-dark mt-1" data-toggle="tooltip" title="Share Via Whatsapp"><i class="icon-copy dw dw-share-1"></i> </a>
+                <a href="https://wa.me/+91{{new_order.patient.phone_number}}?text=http%3A%2F%2F127.0.0.1%3A8000%2Fclinic%2Flab_report_download{{new_order.id}}" class="btn btn-outline-dark mt-1" target="_blank" data-toggle="tooltip" title="Share Via Whatsapp"><i class="icon-copy dw dw-share-1"></i></a>
+                <a data-toggle="modal" data-target="#exampleModal12" class="btn btn-outline-dark mt-1" data-toggle="tooltip" title="Share Via Email">
+                    <i class="icon-copy dw dw-email-1"></i></i>
+                </a>
+
+     
+               
                 <a href="{%url 'lab_report_download' new_order.id %}" target="_blank" class="btn btn-outline-dark mt-1" data-toggle="tooltip" title="Download PDF"><i class="icon-copy dw dw-download"></i></a>
                 <div class="pb-20 p-4 patient-deatils">
                     <div class="row">
@@ -138,4 +144,44 @@
     ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
 </div>
 
+
+           <!-- Modal -->
+<div class="modal fade" id="exampleModal12" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Send Email</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{%url 'report_email' new_order.id %}" method="post">
+            {% csrf_token %}
+        
+        <div class="modal-body">
+            <label for="email">Email Address</label>
+          <input type="email" name="email" class="form-control" value="{{new_order.patient.email}}"><br>
+          <button onclick="sendMailLoader()" type="submit" class="btn btn-success">
+            <div id="spinner-sendmail" style="display: none;">
+            <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden"></span>
+            </div>
+            Sending....
+        </div>
+            <span id="mail-send"> Send Email</span>
+        </button>
+
+        </div>
+    </form>
+        
+        
+      </div>
+
+    </div>
+    <script>
+        function sendMailLoader(){
+            document.getElementById("spinner-sendmail").style.display = "block";
+            document.getElementById("mail-send").style.display = "none";
+        }
+    </script>
 {% endblock %}

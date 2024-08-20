@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load groupby %}
+{% load groupby %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,7 +90,7 @@
 
         th,
         td {
-            padding: 10px !important;
+            padding: 9px !important;
             -webkit-print-color-adjust: exact;
         }
 
@@ -119,21 +120,27 @@
             color: rgb(136, 136, 242);
             -webkit-print-color-adjust: exact;
         }
+        .info-block p{
+            line-height: 10px;
+        }
+        #invoice-content h4{
+            line-height: 5px;
+        }
     </style>
 </head>
 
 <body onload="printInvoice()">
-    <div class="head" style="position: fixed;top:0;z-index: -1;">
-    <img src="/static/src/images/medi_lab.png" width="100%" alt="">
-</div>
+    <div class="head" style="position: relative;top:0;z-index: -1;">
+        <img src="{{lab.letter_head.url}}" width="100%" alt="">
+    </div>
 
-    <div class="container" id="invoice-content" style="margin-top: 130px;">
+    <div class="container" id="invoice-content" style="margin-top: 0px;">
         <div class="header" style="text-transform: uppercase;">
         </div>
 
         <div class="patient-info">
             <div class="info-block">
-                <h3>Name: {{order.patient_name}}</h3>
+                <p>Name: {{order.patient_name}}</p>
                 <p>Age: {{order.patient.age}}</p>
                 <!-- <p>Gender: {{order.patient.gender}}</p> -->
                 <p>PID: {{order.order_number}}</p>
@@ -141,7 +148,7 @@
             </div>
             <div class="info-block">
                 <p>Ref. By: Dr. {{order.doctor}}</p>
-                <p>Sampled on: </p>
+                <p>Sampled on: {{order.sample_collected_time}}</p>
                 <p>Reported on: {{order.created_date}}</p>
 
             </div>
@@ -149,40 +156,41 @@
         <hr>
         <h4>LABORATORY REPORT</h4>
         <table class="report-table">
-            <thead >
-            
+            <thead>
+
                 <tr style="border-top: .5px solid gray; border-bottom: .5px solid gray;">
                     <th>INVESTIGATION</th>
                     <th>RESULT</th>
                     <th>UNIT</th>
                     <th>REFERENCE VALUE</th>
                 </tr>
-           
+
 
             </thead>
-            
-        <!-- Grouped Comprehensive Tests -->
-        {% for comprehensive_test, tests in grouped_results.items %}
-    {% if comprehensive_test %}
-        <tr>
-            <td colspan="4" class="report-title" style="text-align: center; font-size: 18px; color: rgb(233, 52, 52);">
-                {{ comprehensive_test.name }}
-            </td>
-        </tr>
-    {% endif %}
-    
-    {% for item in tests %}
-    <tr>
-        <td style="text-align: left !important;">{{ item.test_type }}</td>
-        <td>{{ item.result_value }} {{ item.comments }}</td>
-        <td>{{ item.test_type.unit }}</td>
-        <td>{{ item.test_type.normal_range }}</td>
-    </tr>
-    {% endfor %}
-{% endfor %}
-                
-        <!-- Ungrouped Individual Tests -->
-        <!-- <thead>
+
+            <!-- Grouped Comprehensive Tests -->
+            {% for comprehensive_test, tests in grouped_results.items %}
+            {% if comprehensive_test %}
+            <tr>
+                <td colspan="4"  class="report-title"
+                    style="text-align: center; font-size: 14px; color: rgb(233, 52, 52);">
+                    {{ comprehensive_test.name }}
+                </td>
+            </tr>
+            {% endif %}
+
+            {% for item in tests %}
+            <tr>
+                <td style="text-align: left !important;">{{ item.test_type }}</td>
+                <td>{{ item.result_value }} {{ item.comments }}</td>
+                <td>{{ item.test_type.unit }}</td>
+                <td>{{ item.test_type.normal_range }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+
+            <!-- Ungrouped Individual Tests -->
+            <!-- <thead>
             <th colspan="4" style="text-align: center; color: red;">Un Gropuped</th>
         </thead>
         {% for item in grouped_results.nocom %}
@@ -197,9 +205,9 @@
                     </tr>
                 </tbody>
         {% endfor %} -->
-    </table>
+        </table>
 
-        <div class="signature-block" style="bottom: 0; position: relative;">
+        <!-- <div class="signature-block" style="bottom: 0; position: relative;">
             <div>
                 <p></p>
                 <p></p>
@@ -212,11 +220,11 @@
                 <p></p>
                 <p></p>
             </div>
-        </div>
+        </div> -->
 
     </div>
     <div class="head" style="position: fixed;bottom: 0; z-index: -1;">
-        <img src="/static/src/images/medilab_footer.png" width="100%" alt="">
+        <img src="{{lab.letter_head_down.url}}" width="100%" alt="">
     </div>
 
     <script>
@@ -226,11 +234,12 @@
             document.body.innerHTML = printContents;
             window.print();
             document.body.innerHTML = originalContents;
-            
-            setTimeout(function() {
-            window.close(); // Close the window after printing
-        }, 100); // 100ms delay, adjust if needed
+
+            setTimeout(function () {
+                window.close(); // Close the window after printing
+            }, 100); // 100ms delay, adjust if needed
         }
     </script>
 </body>
+
 </html>

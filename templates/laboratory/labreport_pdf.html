@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load static %}
 {% load groupby %}
 
 <head>
@@ -92,6 +93,7 @@
         td {
             padding: 10px !important;
             -webkit-print-color-adjust: exact;
+            
         }
 
         .signature-block {
@@ -126,7 +128,7 @@
 <body>
     <div class="container" id="contentToDownload" style="width: 100%;">
         <div class="head" >
-            <img src="/static/src/images/medi_lab.png" width="100%" alt="">
+            <img src="{{ lab.letter_head.url}}" width="100%" alt="">
         </div>
         
             <div class="container" id="invoice-content" >
@@ -218,7 +220,7 @@
         
             </div>
             <div class="head" >
-                <img src="/static/src/images/medilab_footer.png" style="display: block;position: relative;bottom: 0;" width="100%" alt="">
+                <img src="{{lab.letter_head_down.url}}" style="display: block;position: relative;bottom: 0;" width="100%" alt="">
             </div>
     </div>
 

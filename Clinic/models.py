@@ -31,6 +31,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     test_name = models.CharField(max_length=20, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    sample_collected_time = models.DateTimeField(null=True, blank=True)
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True)
     patient_name = models.CharField(max_length=255, null=True, blank=True)
     sample = models.CharField(max_length=10,default=" ")

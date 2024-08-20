@@ -1,0 +1,18 @@
+
+{% autoescape off %}
+ 
+Hi {{new_order.patient}},
+    Your Medicare Lab Report is ready....
+
+    http://{{ domain }}{%url 'lab_report_download' new_order.id %}
+
+   Download from below link 
+
+       
+Best Regards,
+
+{{request.user.first_name}}
+        
+ 
+
+  {% endautoescape %}

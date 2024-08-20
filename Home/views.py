@@ -184,6 +184,20 @@ def customer_single(request,pk):
 
     return render(request,"laboratory/patientsingle.html",context)
 
+def UploadLeatterHead(request):
+    if request.method =="POST":
+        letter_top = request.FILES.get("letter_top")
+        letter_down = request.FILES.get("letter_down")
+        lab = LabDetails.objects.get(user = request.user)
+        lab.letter_head = letter_top
+        lab.save()
+        lab.letter_head_down = letter_down
+        lab.save()
+        messages.info(request,"letter head created")
+        return redirect("profile")
+
+    return redirect("profile")
+
 
 
 

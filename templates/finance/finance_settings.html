@@ -212,6 +212,38 @@
             });
         });
     });
+
+
+    $('.item_price').on('input', function () {
+          var result = $(this).val();
+          var resultid = $(this).data("price-id")
+          var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+          console.log('staring...................')
+
+          $.ajax({
+              url: "{% url 'addprice_ajax' %}",
+              type: "POST",
+              data: {
+                  result: result,
+                  resultid:resultid,
+                  csrfmiddlewaretoken: csrfToken
+              },
+              success: function (response) {
+                  if (response.success) {
+                      // alert('Order updated successfully.');
+                    //   $("#testdetails").html(response.html);
+                      console.log(response)
+                      // Optionally update the DOM with new patient details
+                  } else {
+                      alert('Failed to update price.');
+                  }
+              },
+              error: function (xhr, status, error) {
+                  alert('An error occurred while updating the price.');
+              }
+          });
+      });
+
 </script>
 
 
