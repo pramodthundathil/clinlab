@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+
 
 
 
@@ -196,7 +198,7 @@ def adjustment(request,pk):
         if discount:
             invoice.discount = float(discount)
         invoice.save()
-        # invoiceitems = InvoiceItems.objects.filter(invoice = invoice )
+        
             
         invoice.total_payable = invoice.total_amount - invoice.discount + invoice.adjustment
         invoice.save()
@@ -206,8 +208,107 @@ def adjustment(request,pk):
 
 
 @login_required(login_url='SignIn')
+def adjustment_custome(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    if request.method == "POST":
+        ajustments = request.POST.get('other_amount')
+        discount = request.POST.get('discount')
+        
+        if ajustments:
+            invoice.adjustment = float(ajustments)
+        if discount:
+            invoice.discount = float(discount)
+        invoice.save()
+        
+            
+        invoice.total_payable = invoice.total_amount - invoice.discount + invoice.adjustment
+        invoice.save()
+
+        print(ajustments, discount,"--------------------=======================")
+    return redirect("CreateInvoice",pk = invoice.order.id)
+
+
+@login_required(login_url='SignIn')
 def delete_invoice(request,pk):
     invoice = Invoce.objects.get(id = pk)
     invoice.delete()
     messages.info(request,"Invoice deleted")
     return redirect('Invoices')
+
+
+@login_required(login_url='SignIn')
+def CreateInvoice(request,pk):
+    order =  Order.objects.get(id = pk)
+    items = TestResult.objects.filter(order = order)
+    try:
+        invoice = Invoce.objects.create(order = order, user = request.user,total_payable = 0)
+        invoice.save()
+    except:
+        if Invoce.objects.filter(order = order).exists():
+            invoice = Invoce.objects.get(order = order)
+            
+            invoice_total = CustomeInvoiceItems.objects.filter(invoice=invoice).aggregate(total_price=Sum('price'))['total_price']
+            invoice_total = invoice_total or 0.0
+            invoice.total_amount = invoice_total
+            invoice.total_payable = invoice.total_amount - invoice.discount + invoice.adjustment
+            invoice.save()
+
+            return redirect("Get_Custome_Invoice", pk = invoice.id )
+                
+    try:
+        lab = LabDetails.objects.get(user = request.user)
+    except:
+        messages.info(request,"You dont have lettr head please uploadit")
+        return redirect("Profile")
+    
+    context = {
+        "lab":lab
+    }
+    return redirect("Get_Custome_Invoice", pk = invoice.id)
+
+
+def Create_Customeamount_items(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    if request.method == "POST":
+        description = request.POST.get("description")
+        price = request.POST.get("price")
+        items = CustomeInvoiceItems.objects.create(invoice = invoice, user = request.user, Description = description, price = price)
+        items.save()
+        
+        return redirect("CreateInvoice",pk = invoice.order.id)
+    
+    
+def Delete_Items(request,pk):
+    item  = CustomeInvoiceItems.objects.get(id = pk)
+    invoice = item.invoice
+    item.delete()
+    return redirect("CreateInvoice",pk = invoice.order.id)
+
+
+
+
+def Get_Custome_Invoice(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    invoice_items = CustomeInvoiceItems.objects.filter(invoice = invoice, user = request.user)
+    lab = LabDetails.objects.get(user = request.user)
+
+    context = {
+        "invoice":invoice,
+        "invoice_items":invoice_items,
+        "lab":lab
+    }
+    return render(request,"finance/create_invoice.html",context)
+
+
+def custome_invoiceprint(request,pk):
+    invoice = Invoce.objects.get(id = pk)
+    invoice_items = CustomeInvoiceItems.objects.filter(invoice = invoice)
+    lab = LabDetails.objects.get(user = request.user)
+
+    context = {
+        "invoice":invoice,
+        "invoice_items":invoice_items,
+        "lab":lab
+    }
+
+    return render(request,'finance/custome_invoice.html',context)

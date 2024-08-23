@@ -117,7 +117,7 @@
 
         h4 {
             text-align: center;
-            color: rgb(136, 136, 242);
+            color: rgb(5, 111, 147);
             -webkit-print-color-adjust: exact;
         }
         .info-block p{
@@ -143,11 +143,13 @@
                 <p>Name: {{order.patient_name}}</p>
                 <p>Age: {{order.patient.age}}</p>
                 <!-- <p>Gender: {{order.patient.gender}}</p> -->
-                <p>PID: {{order.order_number}}</p>
+                <p>Ref. By: Dr. {{order.doctor}}</p>
+
 
             </div>
             <div class="info-block">
-                <p>Ref. By: Dr. {{order.doctor}}</p>
+                <p>PID: {{order.order_number}}</p>
+
                 <p>Sampled on: {{order.sample_collected_time}}</p>
                 <p>Reported on: {{order.created_date}}</p>
 

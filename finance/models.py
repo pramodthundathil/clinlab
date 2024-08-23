@@ -22,6 +22,13 @@ class Invoce(models.Model):
     total_amount = models.FloatField(null=True, blank=True, default=0)
     discount = models.FloatField(null=True, blank=True, default=0)
     adjustment = models.FloatField(null=True, blank=True, default=0)
+    
+
+
+
+    Custome_total_amount = models.FloatField(null=True, blank=True, default=0)
+    Custome_discount = models.FloatField(null=True, blank=True, default=0)
+    Custome_adjustment = models.FloatField(null=True, blank=True, default=0)
     total_payable = models.FloatField()
 
     def save(self, *args, **kwargs):
@@ -36,6 +43,19 @@ class Invoce(models.Model):
     
     def __str__(self):
         return str(self.order + self.invoice_number)
+    
+
+class CustomeInvoiceItems(models.Model):
+    Description = models.CharField(max_length=255)
+    price = models.FloatField()
+    invoice = models.ForeignKey(Invoce, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+
+        return str(self.price + self.invoice )
+    
+
     
 class InvoiceItems(models.Model):
     TestPrice = models.ForeignKey(TestPriceSlab,on_delete=models.SET_NULL,null=True)

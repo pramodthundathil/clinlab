@@ -386,8 +386,7 @@ def update_order_collected_time(request, pk):
 
 @login_required(login_url='SignIn')
 def pending_samples(request):
-    order =  Order.objects.filter(user = request.user,order_status = False)
-
+    order =  Order.objects.filter(user = request.user,order_status = False).order_by("-created_date")
 
     context = {
         "order":order
@@ -395,7 +394,7 @@ def pending_samples(request):
     return render(request,"laboratory/pendingsamles.html",context)
 
 def completed_samples(request):
-    order =  Order.objects.filter(user = request.user,order_status = True)
+    order =  Order.objects.filter(user = request.user,order_status = True).order_by("-created_date")
 
 
     context = {

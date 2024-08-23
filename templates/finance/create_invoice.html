@@ -10,6 +10,33 @@
 		#invoice-content {
 			width: 100% !important;
 		}
+
+		#t {
+			display: none;
+		}
+
+		.invoice-desc th,
+		td {
+			padding: 10px;
+		}
+
+		.invoice-desc table {
+			padding: 10px;
+		}
+
+		/* Ensure form input fields are hidden during print */
+        #invoice-content .forminput {
+            display: none !important;
+        }
+	}
+
+	.invoice-desc th,
+	td {
+		padding: 10px;
+	}
+
+	.invoice-desc table {
+		padding: 10px;
 	}
 </style>
 
@@ -34,14 +61,14 @@
 					<div class="col-md-6 col-sm-12 text-right">
 						<div class="dropdown">
 							{% for message in messages%}
-                        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
-                            <strong>Alert!</strong> {{message}}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        {% endfor %}
-							<a class="btn btn-primary" onclick="printInvoice()" role="button">
+							<div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+								<strong>Alert!</strong> {{message}}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							{% endfor %}
+							<a class="btn btn-primary" target="_blank" href="{%url 'custome_invoiceprint' invoice.id %}" role="button">
 								Print Invoice
 							</a>
 							<button data-toggle="modal" data-target="#Medium-modal" class="btn btn-warning">Make
@@ -57,7 +84,7 @@
 												aria-hidden="true">×</button>
 										</div>
 										<div class="modal-body text-left">
-											<form action="{%url 'adjustment' invoice.id %}" method="post">
+											<form action="{%url 'adjustment_custome' invoice.id %}" method="post">
 												{% csrf_token %}
 												<div class="modal-body">
 													<label for="">Add Amount</label>
@@ -91,6 +118,7 @@
 						<div class="col-md-6">
 							<h5 class="mb-15">Client Name:{{invoice.order.patient_name}}</h5>
 							<p class="font-14 mb-5">Doctor: Dr. {{invoice.order.doctor}}</p>
+
 							<p class="font-14 mb-5">Date Issued: <strong
 									class="weight-600">{{invoice.date_time}}</strong></p>
 							<p class="font-14 mb-5">Invoice No: <strong
@@ -106,39 +134,61 @@
 						</div>
 					</div>
 					<div class="invoice-desc pb-30">
-						<div class="invoice-desc-head clearfix">
-							<div class="invoice-sub">Description</div>
-							<div class="invoice-rate">Rate</div>
-							<div class="invoice-subtotal">Subtotal</div>
-						</div>
-						<div class="invoice-desc-body">
-							<ul>
-								{% for item in invoice_items %}
-								<li class="clearfix">
-									<div class="invoice-sub">{{item.TestPrice.test}}</div>
-									<div class="invoice-rate">Rs. {{item.price}}</div>
-									<!-- <div class="invoice-hours">{{item.price}}</div> -->
-									<div class="invoice-subtotal"><span class="weight-600">Rs {{item.price}}</span>
-									</div>
-								</li>
-								{% endfor %}
-								<li class="clearfix">
-									<div class="invoice-sub">Other Amount</div>
-									<div class="invoice-rate">{{invoice.adjustment}}</div>
-									<!-- <div class="invoice-hours">{{item.price}}</div> -->
-									<div class="invoice-subtotal"><span class="weight-600">Rs
-											{{invoice.adjustment}}</span></div>
-								</li>
-								<li class="clearfix">
-									<div class="invoice-sub">Discount</div>
-									<div class="invoice-rate">{{invoice.discount}}</div>
-									<!-- <div class="invoice-hours">{{item.price}}</div> -->
-									<div class="invoice-subtotal"><span class="weight-600">Rs
-											{{invoice.discount}}</span></div>
-								</li>
+						<table class="table" style="border:1px solid !important; width: 100%;">
+							<tr>
+								<th style="border: 1px solid !important;width:5% !important">Sl. No</th>
+								<th style="border: 1px solid !important;width:70% !important">Discription</th>
+								<th style="border: 1px solid !important;">Rate</th>
+							</tr>
+							{% for item in invoice_items %}
+							<tr>
+								<td>1</td>
+								<td style="border-left: 1px solid !important;" id="t">{{item.Description}}</td>
+								<td style="border-left: 1px solid !important;">{{item.price}}
 
-							</ul>
-						</div>
+									<a href="{%url 'Delete_Items' item.id %}" onclick="return confirm('Do you want to delete ?')" class="btn btn-outline-danger btn-sm">Delete</a>
+								</td>
+							</tr>
+							{% endfor %}
+							
+							<div class="forminput">
+								<!-- Form Input Fields That Should Be Hidden on Print -->
+								 <form action="{%url 'Create_Customeamount_items' invoice.id %}" method="post">
+									{% csrf_token %}
+								<tr>
+									<td></td>
+									<td style="border-left: 1px solid !important;">Description:<textarea 
+											placeholder="Add Description" class="form-control" required name="description"
+											id=""></textarea></td>
+									<td style="border-left: 1px solid !important;">Price:<input required type="number"
+											placeholder="price" name="price" class="form-control mt-2">
+											<button class="btn btn-success btn-sm mt-1">Add</button>
+										</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td style="border-left: 1px solid !important;" id="t">Other Amount</td>
+									<td style="border-left: 1px solid !important;">{{invoice.adjustment}}
+	
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td style="border-left: 1px solid !important;" id="t">Discounts</td>
+									<td style="border-left: 1px solid !important;">{{invoice.discount}}
+	
+									</td>
+								</tr>
+								
+							</form>
+							</div>
+
+							<tr>
+
+								<th colspan="2" style="border: 1px solid !important;text-align: center;">Total</th>
+								<th style="border: 1px solid !important;">0</th>
+							</tr>
+						</table>
 						<div class="invoice-desc-footer">
 							<div class="invoice-desc-head clearfix">
 								<div class="invoice-sub">Info</div>
@@ -151,7 +201,7 @@
 										<div class="invoice-sub">
 											<p class="font-14 mb-5">Invoice Number: <strong
 													class="weight-600">{{invoice.invoice_number}}</strong></p>
-											<p class="font-14 mb-5">Payemnt Status: <strong class="weight-600"><span
+											<p class="font-14 mb-5">Payment Status: <strong class="weight-600"><span
 														class="badge bg-success">Paid</span></strong></p>
 										</div>
 										<div class="invoice-rate font-10 weight-600">{{invoice.date_time}}</div>
@@ -173,12 +223,16 @@
 	</div>
 </div>
 <script>
-	function printInvoice() {
-		var printContents = document.getElementById('invoice-content').innerHTML;
-		var originalContents = document.body.innerHTML;
-		document.body.innerHTML = printContents;
-		window.print();
-		document.body.innerHTML = originalContents;
-	}
+	// function printInvoice() {
+	// 	var forminputElements = document.querySelectorAll('.forminput');
+    // 	forminputElements.forEach(function(el) {
+    //     el.style.display = 'none';
+    // 	});
+	// 	var printContents = document.getElementById('invoice-content').innerHTML;
+	// 	var originalContents = document.body.innerHTML;
+	// 	document.body.innerHTML = printContents;
+	// 	window.print();
+	// 	document.body.innerHTML = originalContents;
+	// }
 </script>
 {% endblock %}
