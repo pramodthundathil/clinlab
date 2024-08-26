@@ -10,28 +10,31 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4> Comprehensive Test</h4>
+                            <h4>Test Category</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{%url 'Index'%}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Comprehensive Tests</li>
+                                <li class="breadcrumb-item active" aria-current="page">Test Category</li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
+                        {% for message in messages%}
+                                    <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                                        <strong></strong> {{message}}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
                         <div class="dropdown">
-                            {% for message in messages%}
-                            <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
-                                <strong></strong> {{message}}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {% endfor %}
+                            
+                                
+                                
                             <button class="btn btn-lg btn-primary" data-toggle="modal"
                                 data-target="#bd-example-modal-lg">
-                                <i class="icon-copy dw dw-add"></i> Add Test
+                                <i class="icon-copy dw dw-add"></i> Add Category
                             </button>
 
                             <!-- modal for test adding  -->
@@ -40,59 +43,35 @@
                                 <div class="modal-dialog modal-lg modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h4 class="modal-title" id="myLargeModalLabel">Add New Comprehensive Test
-                                            </h4>
+                                            <h4 class="modal-title" id="myLargeModalLabel">Add New Category</h4>
                                             <button type="button" class="close" data-dismiss="modal"
                                                 aria-hidden="true">×</button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="{%url 'AddComprehensivetest' %}" method="post">
+                                            <form id="add-test-form" method="post">
                                                 {% csrf_token %}
 
                                                 <div class="row text-left">
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <div class="form-group">
-                                                            <label>Test Name</label>
-                                                            <input type="text" class="form-control"
-                                                                placeholder="Test Name" required name="name">
-                                                        </div>
-
-                                                    </div>
-
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
-                                                            <label>Specimen</label>
+                                                            <label>Category Name</label>
                                                             <input type="text" class="form-control"
-                                                                placeholder="Specimen" name="specimen">
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div class="col-md-6 col-sm-12">
-                                                        <div class="form-group">
-                                                            <label>Test Category</label>
-                                                            <select name="test_ct" id="" required class="form-control">
-                                                                <option value="" selected  disabled>-----------</option>
-                                                                {% for test_cat in test_category %}
-                                                                <option value="{{test_cat.id}}">{{test_cat.name}}</option>
-
-                                                                {% endfor %}
-                                                            </select>
+                                                                placeholder="Category" required name="name">
                                                         </div>
 
                                                     </div>
                                                     
-                                                    <div class="col-md-12 col-sm-12">
+                                                    <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
-                                                            <label>Description (Optional)</label>
-                                                            <textarea name="description"
-                                                                class="form-control"></textarea>
+                                                            <label>Sepecimen</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Specimen" required name="spec">
                                                         </div>
 
                                                     </div>
-
+                                                    
                                                 </div>
-                                                <button type="submit" class="btn btn-primary">Add Test</button>
+                                                <button type="submit" class="btn btn-primary">Add Category</button>
                                             </form>
                                         </div>
                                         <div class="modal-footer">
@@ -110,15 +89,14 @@
 
             <!-- submission form model and rejection model  -->
 
-            <div class="modal fade" id="success-modal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="success-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-body text-center font-18">
                             <h3 class="mb-20">Test Added To list!</h3>
                             <div class="mb-30 text-center"><img src="{%static 'vendors/images/success.png' %}"></div>
-                            New Test added to list click done to reload <br><br>
-                            <a href="{%url 'SingleTests' %}" type="button" class="btn btn-primary">Done</a>
+                            New Test category added to list click done to reload <br><br>
+                            <a href="{%url 'TestCategory' %}" type="button" class="btn btn-primary">Done</a>
 
                         </div>
                         <div class="modal-footer justify-content-center">
@@ -126,14 +104,13 @@
                     </div>
                 </div>
             </div>
-
-            <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-                aria-hidden="true">
+            
+            <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm modal-dialog-centered">
                     <div class="modal-content bg-danger text-white">
                         <div class="modal-body text-center">
                             <h3 class="text-white mb-15"><i class="fa fa-exclamation-triangle"></i> Alert</h3>
-                            <p>Test is not added somethig went wrong</p>
+                            <p>Test category is not added somethig went wrong</p>
                             <button type="button" class="btn btn-light" data-dismiss="modal">Ok</button>
                         </div>
                     </div>
@@ -143,37 +120,32 @@
             <!-- Export Datatable start -->
             <div class="card-box mb-30" style="overflow-x: auto;">
                 <div class="pd-20">
-                    <h4 class="text-blue h4">Available Tests</h4>
+                    <h4 class="text-blue h4">Available Categories</h4>
                 </div>
                 <div class="pb-20">
                     <table class="table hover multiple-select-row data-table-export nowrap">
                         <thead>
                             <tr>
                                 <th>Sl No</th>
-                                <th class="table-plus datatable-nosort">Test name</th>
-                                <th>Total Tests</th>
-                                <th>Description</th>
+                                <th class="table-plus datatable-nosort">Category</th>
                                 <th>Specimen</th>
+                                <th>Total Tests</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in tests %}
+                            {% for item in category %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
                                 <td class="table-plus">{{item.name}}</td>
+                                <td>{{item.specimen}}</td>
+                                <td>{{item.tests.all.count}}</td>
                                 <td>
-                                    {{item.tests.all.count}}
-                                </td>
-                                <td>{{item.Description}}</td>
-                                <td>{{item.specimen}} </td>
-                                <td>
-                                    <a href="{%url 'Comprehensive_single' item.id %}" class="btn btn-outline-info"><i class="icon-copy dw dw-edit-1"></i></a>
+                                    <a href="{%url 'Test_category_single' item.id %}" class="btn btn-outline-info"><i class="icon-copy dw dw-edit-1"></i></a>
 
                                     <!-- delete model start  -->
-                                    <a href="{%url 'delete_comprehensive_test' item.id %}" onclick="confirm ('Are you sure want to delete ??')"
-                                        class="btn btn-outline-danger"><i class="icon-copy dw dw-delete-3"></i></a>
-
+                                            <a href="{%url 'delete_category' item.id %}" onclick="return confirm ('Are you sure ??')"  class="btn btn-outline-danger"><i class="icon-copy dw dw-delete-3" ></i></a>
+                                            
                                     <!-- delete model end  -->
 
                                 </td>
@@ -189,24 +161,23 @@
 
 
         </div>
-
+        <div class="footer-wrap pd-20 mb-20 card-box">
+            ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
+        </div>
     </div>
-</div>
-<div class="footer-wrap pd-20 mb-20 card-box">
-    ClinLab - Powered <a href="https://www.byteboot.in" target="_blank">Byteboot</a>
 </div>
 <!-- js -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#add-test-form').on('submit', function (event) {
+    $(document).ready(function() {
+        $('#add-test-form').on('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
 
             $.ajax({
-                url: "{% url 'add_test_type' %}", // Your Django view URL
+                url: "{% url 'add_category' %}", // Your Django view URL
                 type: 'POST',
                 data: $(this).serialize(),
-                success: function (response) {
+                success: function(response) {
                     if (response.status === 'success') {
                         $('#bd-example-modal-lg').modal('hide'); // Hide the add test modal
                         $('#success-modal').modal('show'); // Show success modal
@@ -215,7 +186,7 @@
                         $('#alert-modal').modal('show'); // Show alert modal
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     $('#bd-example-modal-lg').modal('hide'); // Hide the add test modal
                     $('#alert-modal').modal('show'); // Show alert modal
                 }

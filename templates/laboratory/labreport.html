@@ -90,7 +90,7 @@
 
         th,
         td {
-            padding: 9px !important;
+            padding: 11px !important;
             -webkit-print-color-adjust: exact;
         }
 
@@ -142,94 +142,83 @@
             <div class="info-block">
                 <p>Name: {{order.patient_name}}</p>
                 <p>Age: {{order.patient.age}}</p>
-                <!-- <p>Gender: {{order.patient.gender}}</p> -->
                 <p>Ref. By: Dr. {{order.doctor}}</p>
-
-
             </div>
             <div class="info-block">
                 <p>PID: {{order.order_number}}</p>
-
                 <p>Sampled on: {{order.sample_collected_time}}</p>
                 <p>Reported on: {{order.created_date}}</p>
-
             </div>
         </div>
         <hr>
         <h4>LABORATORY REPORT</h4>
         <table class="report-table">
             <thead>
-
                 <tr style="border-top: .5px solid gray; border-bottom: .5px solid gray;">
-                    <th>INVESTIGATION</th>
+                    <th>TEST</th>
                     <th>RESULT</th>
-                    <th>UNIT</th>
-                    <th>REFERENCE VALUE</th>
+                    <th style="width:20% !important">UNIT</th>
+                    <th>REFERENCE RANGE</th>
                 </tr>
-
-
             </thead>
 
-            <!-- Grouped Comprehensive Tests -->
-            {% for comprehensive_test, tests in grouped_results.items %}
-            {% if comprehensive_test %}
-            <tr>
-                <td colspan="4"  class="report-title"
-                    style="text-align: center; font-size: 14px; color: rgb(233, 52, 52);">
-                    {{ comprehensive_test.name }}
-                </td>
-            </tr>
-            {% endif %}
+            {% for category, tests in grouped_results.items %}
+                <tr>
+                    <th colspan="4" style="text-align: center; color: red;text-transform: uppercase;">{{ category }}</th>
+                </tr>
 
-            {% for item in tests %}
-            <tr>
-                <td style="text-align: left !important;">{{ item.test_type }}</td>
-                <td>{{ item.result_value }} {{ item.comments }}</td>
-                <td>{{ item.test_type.unit }}</td>
-                <td>{{ item.test_type.normal_range }}
-                    {{ item.test_type.Interpertaion_description }}
+                {% if tests.direct %}
+                <!-- Direct Tests -->
+               
+                {% for item in tests.direct %}
+                <tr>
+                    <td style="text-align: left !important;">{{ item.test_type }}</td>
+                    <td>{{ item.result_value }} {{ item.comments }}</td>
+                    <td>{{ item.test_type.unit }}</td>
+                    <td>{{ item.test_type.normal_range }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
 
-                </td>
-            </tr>
-            {% endfor %}
-            {% endfor %}
-
-            <!-- Ungrouped Individual Tests -->
-            <!-- <thead>
-            <th colspan="4" style="text-align: center; color: red;">Un Gropuped</th>
-        </thead>
-        {% for item in grouped_results.nocom %}
-      
-        
-                <tbody>
+                {% for test_name, comprehensive_tests in tests.items %}
+                    {% if test_name != "direct" %}
+                    <!-- Comprehensive Tests -->
+                    <tr>
+                        <td colspan="4" class="report-title" style="text-align: left; font-size: 12px; color: rgb(5, 111, 147);text-decoration: underline;">
+                            {{ test_name }}
+                        </td>
+                    </tr>
+                    {% for item in comprehensive_tests %}
                     <tr>
                         <td style="text-align: left !important;">{{ item.test_type }}</td>
                         <td>{{ item.result_value }} {{ item.comments }}</td>
                         <td>{{ item.test_type.unit }}</td>
                         <td>{{ item.test_type.normal_range }}</td>
                     </tr>
-                </tbody>
-        {% endfor %} -->
-        </table>
+                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
 
-        <!-- <div class="signature-block" style="bottom: 0; position: relative;">
-            <div>
-                <p></p>
-                <p></p>
-            </div>
-            <div>
-                <p></p>
-                <p></p>
-            </div>
-            <div>
-                <p></p>
-                <p></p>
-            </div>
-        </div> -->
+            <!-- Ungrouped Individual Tests -->
+            {% if grouped_results.nocom %}
+                <tr>
+                    <th colspan="4" style="text-align: center; color: red;text-transform: uppercase;"></th>
+                </tr>
+                {% for item in grouped_results.nocom %}
+                <tr>
+                    <td style="text-align: left !important;">{{ item.test_type }}</td>
+                    <td>{{ item.result_value }} {{ item.comments }}</td>
+                    <td>{{ item.test_type.unit }}</td>
+                    <td>{{ item.test_type.normal_range }}</td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
 
     </div>
     <div class="head" style="position: fixed;bottom: 0; z-index: -1;">
-        <img src="{{lab.letter_head_down.url}}" width="100%" alt="">
+        <img src="{{lab.letter_head_down.url}}" width="100%" alt="jjd">
     </div>
 
     <script>
@@ -241,10 +230,12 @@
             document.body.innerHTML = originalContents;
 
             setTimeout(function () {
-                window.close(); // Close the window after printing
-            }, 100); // 100ms delay, adjust if needed
+                window.close();
+            }, 100);
         }
     </script>
 </body>
+
+</html>
 
 </html>

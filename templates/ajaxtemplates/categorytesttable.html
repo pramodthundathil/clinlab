@@ -1,0 +1,26 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th>Investigation</th>
+            <th>unit</th>
+            <th>Reference Value</th>
+            <th>action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in test_cat.tests.all %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td >{{item.name}}</td>
+            <td ><b> {{item.unit}} </b></td>
+            <td >{{item.normal_range}}</td>
+            <td style="border-right: .2px solid #4f505273;"><a href="" onclick="confirm ('Are you sure want to delete ??')" class="btn btn-outline-danger"
+                ><i
+                    class="icon-copy dw dw-delete-3"></i></a></td>
+        </tr>
+        {% endfor %}
+
+
+    </tbody>
+</table>

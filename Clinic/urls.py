@@ -12,8 +12,19 @@ urlpatterns = [
     path("testdeletefromcomtest/<int:pk>/<int:tk>",views.testdeletefromcomtest,name="testdeletefromcomtest"),
     path("delete_test/<int:pk>",views.delete_test,name="delete_test"),
     path("delete_customer/<int:pk>",views.delete_customer,name="delete_customer"),
+
+    # category 
+    
+    path("TestCategory",views.Testcategory,name="TestCategory"),
+    path("add_category",views.add_category,name="add_category"),
+    path("delete_category/<int:pk>",views.delete_category,name="delete_category"),
+    path("Test_category_single/<int:pk>",views.Test_category_single,name="Test_category_single"),
+    path("addcategory_ajax/<int:pk>",views.addcategory_ajax,name="addcategory_ajax"),
+    
+    # comprehensive 
     
     path("conprehensive_addtest_ajax/<int:pk>",views.conprehensive_addtest_ajax,name="conprehensive_addtest_ajax"),
+    path("category_addtest_ajax/<int:pk>",views.category_addtest_ajax,name="category_addtest_ajax"),
     path("CreateSample",views.CreateSample,name="CreateSample"),
     path("OrderSingle/<int:pk>",views.OrderSingle,name="OrderSingle"),
     path("OrderSingleFinished/<int:pk>",views.OrderSingleFinished,name="OrderSingleFinished"),

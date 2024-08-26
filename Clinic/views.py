@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import TestType, Order, TestResult, ComprehensiveTest
+from .models import TestType, Order, TestResult, ComprehensiveTest, TestCategory
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from Home.models import Units, Patient, LabDetails
@@ -25,6 +25,17 @@ register = template.Library()
 def groupby(value, arg):
     return groupby(value, key=lambda x: getattr(x, arg))
 
+
+
+@register.simple_tag(takes_context=True)
+def check_and_update_displayed(context, category_name):
+    if 'displayed_categories' not in context:
+        context['displayed_categories'] = []
+    if category_name not in context['displayed_categories']:
+        context['displayed_categories'].append(category_name)
+        return True
+    return False
+
 '''
 views is for handling tests and comprehesive tests
 this view include
@@ -43,9 +54,11 @@ this view include
 def SingleTests(request):
     clinicaltest = TestType.objects.all().order_by('-name')
     units = Units.objects.all()
+    category = TestCategory.objects.all()
     context = {
         "clinicaltests":clinicaltest,
-        "units":units
+        "units":units,
+        "category":category
     }
     return render(request,"pathology/singletests.html",context)
 
@@ -61,7 +74,73 @@ def delete_test(request,pk):
     return redirect("SingleTests")
 
 
+def Testcategory(request):
+    category = TestCategory.objects.all()
 
+    context = {
+        "category":category
+    }
+    return render(request,"pathology/testcategory.html",context)
+
+def Test_category_single(request,pk):
+    test_cat = TestCategory.objects.get(id = pk)
+    tests = TestType.objects.all()
+
+
+    context = {
+        "test_cat":test_cat,
+        "tests":tests
+    }
+    return render(request,"pathology/testcategory_single.html",context)
+
+
+@csrf_exempt
+def addcategory_ajax(request,pk):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        com_test = get_object_or_404(TestCategory, id=pk)
+        testid = request.POST.get('testid')
+        test = TestType.objects.get(id = testid)
+        
+        if test:
+            try:
+                com_test.tests.add(test)
+                com_test.save()
+                
+                testdeatil_table = render_to_string('ajaxtemplates/categorytesttable.html', {'test': com_test})
+                return JsonResponse({'success': True,"error": "testdeatil_table","html": testdeatil_table})
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+@csrf_exempt
+def add_category(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('spec')
+       
+
+        try:
+            test_type = TestCategory(
+                name=name,
+                specimen=description,
+                add_by = request.user
+            )
+            test_type.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+def delete_category(request,pk):
+    TestCategory.objects.get(id = pk).delete()
+    messages.info(request, "Category Deleted....")
+    return redirect("TestCategory")
 
 @csrf_exempt
 def add_test_type(request):
@@ -71,6 +150,11 @@ def add_test_type(request):
         normal_range = request.POST.get('range')
         Interpertaion_description = request.POST.get('inter_dis')
         unit = request.POST.get('unit')
+        category = request.POST.get("category")
+        try:
+            category_val = TestCategory.objects.get(id =int(category))
+        except:
+            category_val = None
 
         try:
             test_type = TestType(
@@ -78,7 +162,8 @@ def add_test_type(request):
                 description=description,
                 normal_range=normal_range,
                 Interpertaion_description=Interpertaion_description,
-                unit=unit
+                unit=unit,
+                test_category = category_val
             )
             test_type.save()
             return JsonResponse({'status': 'success'})
@@ -92,8 +177,10 @@ def add_test_type(request):
 @login_required(login_url='SignIn')
 def comprehensive_test(request):
     tests = ComprehensiveTest.objects.filter(add_by = request.user) 
+    test_category = TestCategory.objects.all()
     context = {
-        "tests":tests
+        "tests":tests,
+        "test_category":test_category
     }
     return render(request,'pathology/comprehensive_tests.html',context)
 
@@ -104,8 +191,11 @@ def AddComprehensivetest(request):
         name = request.POST.get('name')
         specimen = request.POST.get('specimen')
         description = request.POST.get('description')
+        test_ct = request.POST.get('test_ct')
+
+        category = TestCategory.objects.get(id = int(test_ct))
         try:
-            test = ComprehensiveTest.objects.create(name = name,specimen = specimen, description = description, add_by = request.user )
+            test = ComprehensiveTest.objects.create(name = name,specimen = specimen, description = description,category = category, add_by = request.user )
             test.save()
         except:
             messages.info(request,"Something worng...")
@@ -195,6 +285,7 @@ def OrderSingle(request,pk):
     patient = Patient.objects.filter(user = request.user)
     tests = TestType.objects.all()
     c_tests = ComprehensiveTest.objects.all()
+    test_cat = TestCategory.objects.all()
     results  = TestResult.objects.filter(order = new_order)
     normal_test = TestResult.objects.filter(order = new_order, is_comprehensive = False)
     com_test = TestResult.objects.filter(order = new_order, is_comprehensive = True )
@@ -204,7 +295,8 @@ def OrderSingle(request,pk):
         "patient":patient,
         "tests":tests,
         "results":results,
-        "c_tests":c_tests
+        "c_tests":c_tests,
+        "test_cat":test_cat
     }
     
     return render(request,"laboratory/addsample.html",context) 
@@ -451,6 +543,28 @@ def conprehensive_addtest_ajax(request,pk):
 
 
 
+@csrf_exempt
+def category_addtest_ajax(request,pk):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        order = get_object_or_404(Order, id=pk)
+        testid = request.POST.get('testid')
+        test_cat = TestCategory.objects.get(id = testid)
+        
+        if test_cat:
+            try:
+                for i in TestType.objects.filter(test_category = test_cat):
+                    result = TestResult.objects.create(order = order, test_type = i, technician = request.user, comments = "",is_comprehensive = False )
+                    result.save()
+                result = TestResult.objects.filter(order = order)
+                testdeatil_table = render_to_string('ajaxtemplates/testdeatil_table.html', {'results': result})
+                return JsonResponse({'success': True,"html": testdeatil_table})
+            except Patient.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Patient does not exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'No patient selected'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
 
 @csrf_exempt
 def addresult_ajax(request):
@@ -511,8 +625,63 @@ def delete_test_result(request,pk):
     messages.info(request,"Test Deleted...")
     return redirect("OrderSingle",pk = order)
 
+
 @login_required(login_url='SignIn')
 def lab_report(request, pk):
+    order = Order.objects.get(id=pk)
+    results = TestResult.objects.filter(order=order)
+
+    lab = {}
+    try:
+        lab = LabDetails.objects.get(user=request.user)
+    except LabDetails.DoesNotExist:
+        messages.warning(request, "Please fill out the address of the lab...")
+        return redirect("profile")
+
+    # Initialize the dictionary to store grouped results
+    group_result = {}
+
+    for result in results:
+        # Get the category name based on whether the test is comprehensive or not
+        if not result.is_comprehensive:
+            try:
+                category_name = result.test_type.test_category.name
+            except:
+                category_name = result.test_type.specimen
+                if category_name == None:
+                    category_name = " "
+            test_type_key = "direct"
+        else:
+            category_name = result.comprehensive_test.category.name
+            test_type_key = result.comprehensive_test.name
+
+        # Initialize the category if it doesn't exist
+        if category_name not in group_result:
+            group_result[category_name] = {"direct": []}
+
+        # Initialize the specific test type key if it's not already present
+        if test_type_key not in group_result[category_name]:
+            group_result[category_name][test_type_key] = []
+
+        # Append the result to the appropriate list
+        if result.is_comprehensive:
+            group_result[category_name][test_type_key].append(result)
+        else:
+            group_result[category_name]["direct"].append(result)
+    
+    print(group_result, "-------------------------")
+
+    context = {
+        "grouped_results": group_result,
+        "order": order,
+        "lab": lab,
+    }
+    return render(request, 'laboratory/labreport.html', context)
+
+
+
+@login_required(login_url='SignIn')
+def lab_report__(request, pk):
     order = Order.objects.get(id=pk)
     results = TestResult.objects.filter(order=order)
 
@@ -555,21 +724,41 @@ def lab_report_nohead(request,pk):
         messages.warning(request, "Please fill out the address of the lab...")
         return redirect("profile")
 
-    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
-    grouped_results = {"nocom":[]}
-    for result in results:
-        if result.comprehensive_test:
-            if result.comprehensive_test not in grouped_results:
-                grouped_results[result.comprehensive_test] = []
-            grouped_results[result.comprehensive_test].append(result)
-        else:
-            if "nocom" not in grouped_results:
-                grouped_results["nocom"] = []
-            grouped_results["nocom"].append(result)
+    # Initialize the dictionary to store grouped results
+    group_result = {}
 
-    print(grouped_results,"------------------")
+    for result in results:
+        # Get the category name based on whether the test is comprehensive or not
+        if not result.is_comprehensive:
+            try:
+                category_name = result.test_type.test_category.name
+            except:
+                category_name = result.test_type.specimen
+                if category_name == None:
+                    category_name = " "
+            test_type_key = "direct"
+        else:
+            category_name = result.comprehensive_test.category.name
+            test_type_key = result.comprehensive_test.name
+
+        # Initialize the category if it doesn't exist
+        if category_name not in group_result:
+            group_result[category_name] = {"direct": []}
+
+        # Initialize the specific test type key if it's not already present
+        if test_type_key not in group_result[category_name]:
+            group_result[category_name][test_type_key] = []
+
+        # Append the result to the appropriate list
+        if result.is_comprehensive:
+            group_result[category_name][test_type_key].append(result)
+        else:
+            group_result[category_name]["direct"].append(result)
+    
+    print(group_result, "-------------------------")
+
     context = {
-        "grouped_results": grouped_results,
+        "grouped_results": group_result,
         "order": order,
         "lab": lab,
     }
@@ -587,26 +776,44 @@ def lab_report_download(request,pk):
         messages.warning(request, "Please fill out the address of the lab...")
         return redirect("profile")
 
-    # Group the results by comprehensive_test (or None if it's not part of any comprehensive test)
-    grouped_results = {"nocom":[]}
-    for result in results:
-        if result.comprehensive_test:
-            if result.comprehensive_test not in grouped_results:
-                grouped_results[result.comprehensive_test] = []
-            grouped_results[result.comprehensive_test].append(result)
-        else:
-            if "nocom" not in grouped_results:
-                grouped_results["nocom"] = []
-            grouped_results["nocom"].append(result)
+    # Initialize the dictionary to store grouped results
+    group_result = {}
 
-    print(grouped_results,"------------------")
+    for result in results:
+        # Get the category name based on whether the test is comprehensive or not
+        if not result.is_comprehensive:
+            try:
+                category_name = result.test_type.test_category.name
+            except:
+                category_name = result.test_type.specimen
+                if category_name == None:
+                    category_name = " "
+            test_type_key = "direct"
+        else:
+            category_name = result.comprehensive_test.category.name
+            test_type_key = result.comprehensive_test.name
+
+        # Initialize the category if it doesn't exist
+        if category_name not in group_result:
+            group_result[category_name] = {"direct": []}
+
+        # Initialize the specific test type key if it's not already present
+        if test_type_key not in group_result[category_name]:
+            group_result[category_name][test_type_key] = []
+
+        # Append the result to the appropriate list
+        if result.is_comprehensive:
+            group_result[category_name][test_type_key].append(result)
+        else:
+            group_result[category_name]["direct"].append(result)
     
+    print(group_result, "-------------------------")
+
     context = {
-        "grouped_results": grouped_results,
+        "grouped_results": group_result,
         "order": order,
         "lab": lab,
     }
-    
     return render(request,'laboratory/labreport_pdf.html',context)
 
 from django.http import HttpResponse
@@ -655,11 +862,19 @@ from datetime import datetime
 
 @login_required(login_url='SignIn')
 def ApproveReport(request,pk):
-    order = Order.objects.get(id = pk)
-    order.approvel_status = True
-    order.order_status = True
-    order.approval_date = datetime.now()
-    order.save()
+    try:
+        order = Order.objects.get(id = pk)
+        order.approvel_status = True
+        order.order_status = True
+        order.approval_date = datetime.now()
+        order.save()
+    except:
+        messages.info(request,"Please Add Patient Name to approve report")
+        return redirect("OrderSingle",pk = pk)
+    if order.patient == None:
+        messages.info(request,"Please Add Patient Name to approve report")
+        return redirect("OrderSingle",pk = pk)
+        
     return redirect("OrderSingleFinished",pk = pk )
 
 

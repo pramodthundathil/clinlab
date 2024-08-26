@@ -157,40 +157,8 @@
           <h4 class="text-blue h4">Testes And Results</h4>
           <form action="">
             <div class="row">
-              <div class="col-md-4 mt-3">
-                <label for="">Select Test Type</label>
-                <select
-                  class="custom-select2 form-control"
-                  name="patient"
-                  id="category"
-                  style="width: 100%; height: 38px; padding: 6px !important"
-                >
-                  <option value="" selected disabled>Select Test</option>
-                  <optgroup label="Test Details">
-                    {% for item in test_cat %}
-                    <option value="{{item.id}}">{{item.name}} -> {{item.specimen}}</option>
-                    {% endfor %}
-                  </optgroup>
-                </select>
-              </div>
-              <div class="col-md-4 mt-3">
-                <label for="">Select Comprehensive Test</label>
-                <select
-                  class="custom-select2 form-control"
-                  name="patient"
-                  id="Comprehensive"
-                  style="width: 100%; height: 38px; padding: 6px !important"
-                >
-                  <option value="" selected disabled>Select Test</option>
-                  <optgroup label="Test Details">
-                    {% for item in c_tests %}
-                    <option value="{{item.id}}">{{item.name}} -> {{item.specimen}}</option>
-                    {% endfor %}
-                  </optgroup>
-                </select>
-              </div>
-              <div class="col-md-4 mt-3">
-                <label for="">Select Single Test</label>
+              <div class="col-md-6">
+                <label for="">Select Test</label>
                 <select
                   class="custom-select2 form-control"
                   name="patient"
@@ -201,6 +169,22 @@
                   <optgroup label="Test Details">
                     {% for item in tests %}
                     <option value="{{item.id}}">{{item}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="">Select Comprehensive Test</label>
+                <select
+                  class="custom-select2 form-control"
+                  name="patient"
+                  id="Comprehensive"
+                  style="width: 100%; height: 38px; padding: 6px !important"
+                >
+                  <option value="" selected disabled>Select Test</option>
+                  <optgroup label="Test Details">
+                    {% for item in c_tests %}
+                    <option value="{{item.id}}">{{item.name}}</option>
                     {% endfor %}
                   </optgroup>
                 </select>
@@ -569,35 +553,6 @@
           });
       });
       
-
-      $('#category').on('change', function () {
-          var testid = $(this).val();
-          var orderId = {{ new_order.id }};
-          var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
-          $.ajax({
-              url: "{% url 'category_addtest_ajax' new_order.id %}",
-              type: "POST",
-              data: {
-                  testid: testid,
-                  csrfmiddlewaretoken: csrfToken
-              },
-              success: function (response) {
-                  if (response.success) {
-                      // alert('Order updated successfully.');
-                      $("#testdetails").html(response.html);
-                      console.log(response)
-                      location.reload()
-                      // Optionally update the DOM with new patient details
-                  } else {
-                      alert('Failed to update order.');
-                  }
-              },
-              error: function (xhr, status, error) {
-                  alert('An error occurred while updating the order.');
-              }
-          });
-      });
 
       $('#Comprehensive').on('change', function () {
           var testid = $(this).val();

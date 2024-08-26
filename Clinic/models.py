@@ -4,24 +4,41 @@ import uuid
 from django.contrib.auth.models import User
 
 
+class TestCategory(models.Model):
+    name = models.CharField(max_length=255)
+    specimen = models.CharField(max_length=255)
+    add_by =models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+    
 class TestType(models.Model):
     name = models.CharField(max_length=100)
     specimen = models.CharField(max_length=20, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
-    normal_range = models.CharField(max_length=100, default=" ")
-    unit = models.CharField(max_length=50)
+    normal_range = models.CharField(max_length=100, default=" ", blank=True, null=True)
+    unit = models.CharField(max_length=50,default=" ", blank=True, null=True)
+    test_category = models.ForeignKey(TestCategory, on_delete=models.SET_NULL, null=True, blank=True)
     Interpertaion_description = models.TextField(null=True, default="")
 
     def __str__(self):
         return self.name
+    
 
 class ComprehensiveTest(models.Model):
+    category = models.ForeignKey(TestCategory, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=20)
     specimen = models.CharField(max_length=10, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     tests = models.ManyToManyField(TestType)
     availability = models.BooleanField(default=True)
     add_by =models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+    
+
 
     def __str__(self):
         return str(self.name)
