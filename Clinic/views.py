@@ -151,6 +151,7 @@ def add_test_type(request):
         Interpertaion_description = request.POST.get('inter_dis')
         unit = request.POST.get('unit')
         category = request.POST.get("category")
+        specimen = request.POST.get("specimen")
         try:
             category_val = TestCategory.objects.get(id =int(category))
         except:
@@ -163,7 +164,8 @@ def add_test_type(request):
                 normal_range=normal_range,
                 Interpertaion_description=Interpertaion_description,
                 unit=unit,
-                test_category = category_val
+                test_category = category_val,
+                specimen = specimen
             )
             test_type.save()
             return JsonResponse({'status': 'success'})

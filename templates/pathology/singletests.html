@@ -52,7 +52,7 @@
                                                 {% csrf_token %}
 
                                                 <div class="row text-left">
-                                                    <div class="col-md-6 col-sm-12">
+                                                    <div class="col-md-12 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Test Name</label>
                                                             <input type="text" class="form-control"
@@ -77,7 +77,7 @@
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Unit</label>
-                                                            <select class="form-control" name="unit">
+                                                            <select class="form-control" required name="unit">
                                                                 <option selected disabled>Select unit of test</option>
                                                                 {% for i in units%}
                                                                 <option value="{{i.unit}}"> {{i.description}}({{i.unit}})</option>
@@ -94,8 +94,17 @@
                                                         </div>
 
                                                     </div>
+                                                    
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
+                                                            <label>Specimen</label>
+                                                            <input name="specimen"
+                                                                class="form-control" placeholder="Specimen" required></textarea>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-12">
+                                                        <div class="form-group"> 
                                                             <label>Description (Optional)</label>
                                                             <textarea name="description"
                                                                 class="form-control"></textarea>

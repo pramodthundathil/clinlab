@@ -6,6 +6,9 @@ class Units(models.Model):
     unit = models.CharField(max_length=20)
     description = models.CharField(max_length=255, null=True, default= " ")
 
+    def __str__(self):
+        return str(self.unit)
+
 
 class Patient(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
