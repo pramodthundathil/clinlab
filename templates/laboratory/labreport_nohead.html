@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/oov2wcw.css">
     <title>Lab Report</title>
     <style>
+         
         body {
             font-family: century-gothic, sans-serif !important;
             margin: 0;
@@ -20,8 +21,7 @@
             margin: auto;
             background-color: white;
             padding: 20px;
-            padding-top: 100px; /* Add padding at the top */
-            padding-bottom: 200px; /* Add padding at the bottom */
+            /* Add padding at the bottom */
         }
 
         .header {
@@ -121,13 +121,18 @@
             color: rgb(5, 111, 147);
             -webkit-print-color-adjust: exact;
         }
+        @media print {
+            @page {
+                margin: 130px 30px; /* Top and bottom margins of 200px */
+            }
+        }
     </style>
 </head>
 
 <body onload="printInvoice()">
     <div class="container" id="invoice-content">
-        <div class="header" style="text-transform: uppercase;">
-        </div>
+        <!-- <div class="header" style="text-transform: uppercase;">
+        </div> -->
 
         <div class="patient-info">
             <div class="info-block">
@@ -137,7 +142,7 @@
             </div>
             <div class="info-block">
                 <p>PID: {{order.order_number}}</p>
-                <p>Sampled on: </p>
+                <p>Sampled on: {{order.sample_collected_time}} </p>
                 <p>Reported on: {{order.created_date}}</p>
             </div>
         </div>
@@ -155,7 +160,7 @@
             
             {% for category, tests in grouped_results.items %}
             <tr>
-                <th colspan="4" style="text-align: center; color: red;text-transform: uppercase;">{{ category }}</th>
+                <th colspan="4" style="text-align: left; color: red;text-transform: uppercase;text-decoration: underline;">{{ category }}</th>
             </tr>
 
             {% if tests.direct %}
@@ -193,7 +198,7 @@
         <!-- Ungrouped Individual Tests -->
         {% if grouped_results.nocom %}
             <tr>
-                <th colspan="4" style="text-align: center; color: red;text-transform: uppercase;"></th>
+                <th colspan="4" style="text-align: left; color: red;text-transform: uppercase;"></th>
             </tr>
             {% for item in grouped_results.nocom %}
             <tr>
